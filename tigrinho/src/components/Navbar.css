@@ -1,0 +1,193 @@
+/* ===== NAVBAR — Casino Neon Dark ===== */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@700;900&display=swap');
+
+.navbar {
+  background: rgba(4, 8, 22, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 212, 255, 0.12);
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(0,212,255,0.06);
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  gap: 2rem;
+}
+
+/* ── Brand ── */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+.navbar-brand:hover { opacity: 0.85; }
+
+.logo-icon {
+  font-size: 1.6rem;
+  filter: drop-shadow(0 0 8px rgba(0,212,255,0.4));
+  animation: logo-pulse 3s ease-in-out infinite;
+}
+@keyframes logo-pulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(0,212,255,0.3)); }
+  50%       { filter: drop-shadow(0 0 14px rgba(0,212,255,0.7)); }
+}
+
+.brand-text {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+.brand-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, #00d4ff, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 1px;
+}
+.brand-tag {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.55rem;
+  letter-spacing: 2px;
+  color: #4a6b8a;
+  -webkit-text-fill-color: #4a6b8a;
+}
+
+/* ── Nav links ── */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 0.25rem;
+  flex: 1;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  color: #4a6b8a;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+.nav-link:hover {
+  color: #a0bcd8;
+  background: rgba(255,255,255,0.04);
+}
+.nav-link.active {
+  color: #00d4ff;
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.nav-icon  { font-size: 0.9rem; }
+
+.nav-active-bar {
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 2px;
+  background: linear-gradient(90deg, #00d4ff, #7c3aed);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(0,212,255,0.6);
+  animation: bar-in 0.25s ease forwards;
+}
+@keyframes bar-in {
+  from { width: 0; opacity: 0; }
+  to   { width: 60%; opacity: 1; }
+}
+
+/* ── Right side ── */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.balance-display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1rem;
+  background: rgba(0, 212, 255, 0.06);
+  border: 1px solid rgba(0, 212, 255, 0.18);
+  padding: 0.45rem 0.85rem;
+  border-radius: 10px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.balance-display:hover {
+  border-color: rgba(0,212,255,0.4);
+  box-shadow: 0 0 16px rgba(0,212,255,0.1);
+}
+
+.balance-label {
+  font-size: 0.6rem;
+  color: #4a6b8a;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.balance-amount {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  font-weight: 900;
+  color: #00d4ff;
+  text-shadow: 0 0 10px rgba(0,212,255,0.5);
+}
+
+.demo-pill {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.55rem;
+  letter-spacing: 2px;
+  padding: 0.3rem 0.65rem;
+  background: rgba(124,58,237,0.12);
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 20px;
+  color: #a855f7;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .navbar { padding: 0 1rem; }
+  .navbar-container { height: auto; flex-wrap: wrap; padding: 0.6rem 0; gap: 0.5rem; }
+  .navbar-brand { order: 1; }
+  .navbar-right { order: 2; margin-left: auto; }
+  .nav-links { order: 3; width: 100%; justify-content: center; gap: 0; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 0.4rem; }
+  .demo-pill { display: none; }
+}
+
+@media (max-width: 420px) {
+  .brand-name { font-size: 0.9rem; }
+  .balance-amount { font-size: 0.85rem; }
+  .nav-label { display: none; }
+  .nav-link { padding: 0.5rem 0.7rem; }
+  .nav-icon { font-size: 1.1rem; }
+}
