@@ -8,15 +8,12 @@ import Slots from "./pages/Slots";
 import Blackjack from "./pages/Blackjack";
 
 function App() {
-  // Global state for user balance (fake demo credits)
   const [balance, setBalance] = useState(1000);
   const [currentPage, setCurrentPage] = useState("home");
 
-  // Handle navigation
   const navigate = (page) => {
     setCurrentPage(page);
-    // Scroll to top
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -28,19 +25,13 @@ function App() {
       />
 
       <main className="main-content">
-        {currentPage === "home" && <Home onNavigate={navigate} />}
-        {currentPage === "roulette" && (
-          <Roulette balance={balance} setBalance={setBalance} />
-        )}
-        {currentPage === "slots" && (
-          <Slots balance={balance} setBalance={setBalance} />
-        )}
-        {currentPage === "blackjack" && (
-          <Blackjack balance={balance} setBalance={setBalance} />
-        )}
+        {currentPage === "home"      && <Home      onNavigate={navigate} />}
+        {currentPage === "roulette"  && <Roulette  balance={balance} setBalance={setBalance} />}
+        {currentPage === "slots"     && <Slots     balance={balance} setBalance={setBalance} />}
+        {currentPage === "blackjack" && <Blackjack balance={balance} setBalance={setBalance} />}
       </main>
 
-      <Footer />
+      <Footer onNavigate={navigate} />
     </div>
   );
 }

@@ -93,14 +93,16 @@ function Roulette({ balance, setBalance }) {
     const winningNumber = rouletteNumbers[winningIndex]
     const winningColor = getNumberColor(winningNumber)
 
-    // The pointer is at the top (12 o'clock).
-    // Segment i starts at i * segmentAngle degrees (offset by -90 in the SVG, but the wheel rotates).
-    // To land winning segment under pointer: rotate so that segment's center aligns to top.
-    // Center of winning segment (in SVG drawing space, 0 = top): winningIndex * segmentAngle + segmentAngle/2
-    // We want that angle to be at 0 (top), so we need to rotate by -(center angle).
-    const segmentCenter = winningIndex * segmentAngle + segmentAngle / 2
-    const extraSpins = 360 * 10 // 10 full spins for effect
-    const targetRotation = currentRotation.current + extraSpins + (360 - segmentCenter)
+    // FORMULA VERIFICADA:
+    // Centro do segmento W no SVG = W*segmentAngle + segmentAngle/2 - 90
+    // Ponteiro no topo = angulo de tela 270. Precisamos: centerW + R = 270 (mod 360)
+    // R_landing = (270 - centerW + 360) mod 360
+    const centerW = winningIndex * segmentAngle + segmentAngle / 2 - 90
+    const rLanding = ((270 - centerW) % 360 + 360) % 360
+    const currentMod = ((currentRotation.current % 360) + 360) % 360
+    const diff = ((rLanding - currentMod) + 360) % 360
+    const extraSpins = 360 * 8
+    const targetRotation = currentRotation.current + extraSpins + diff
 
     currentRotation.current = targetRotation
     setRotation(targetRotation)
