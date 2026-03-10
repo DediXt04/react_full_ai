@@ -198,6 +198,53 @@
   box-shadow: 0 6px 20px rgba(0,0,0,0.55);
   border: 1px solid rgba(0,212,255,0.2);
 }
+
+/* 3D flip container for dealer hidden card */
+.bj-card-flip {
+  perspective: 600px;
+  width: 66px;
+  height: 94px;
+  flex-shrink: 0;
+}
+.bj-card-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+}
+.bj-card-flip-inner.flipped {
+  transform: rotateY(180deg);
+}
+.bj-card-flip-front,
+.bj-card-flip-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 9px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+.bj-card-flip-front {
+  background: linear-gradient(135deg, #1e3a5f 0%, #0f2340 100%);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.55);
+  border: 1px solid rgba(0,212,255,0.2);
+}
+.bj-card-flip-back {
+  transform: rotateY(180deg);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,0,0,0.08);
+}
+.bj-card-flip-back.red {
+  background: linear-gradient(160deg, #fff 0%, #fef2f2 100%);
+  color: #dc2626;
+}
+.bj-card-flip-back.black {
+  background: linear-gradient(160deg, #fff 0%, #f8fafc 100%);
+  color: #1e293b;
+}
 .bj-card.bj-card-empty {
   background: rgba(255,255,255,0.03);
   border: 1px dashed rgba(255,255,255,0.08);

@@ -1,13 +1,18 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useAchievements } from "../context/AchievementContext";
+import { checkWinAchievements } from "../utils/achievementHelpers";
 import "./Slots.css";
 
 const SYMBOLS = [
-  { icon: "🍒", label: "Cherry", weight: 30 },
-  { icon: "🍋", label: "Lemon", weight: 25 },
-  { icon: "🔔", label: "Bell", weight: 20 },
-  { icon: "⭐", label: "Star", weight: 15 },
-  { icon: "7️⃣", label: "Seven", weight: 8 },
-  { icon: "💎", label: "Diamond", weight: 2 },
+  { icon: "🍒", label: "Cherry", weight: 25 },
+  { icon: "🍋", label: "Lemon", weight: 20 },
+  { icon: "🍊", label: "Orange", weight: 16 },
+  { icon: "🔔", label: "Bell", weight: 12 },
+  { icon: "⭐", label: "Star", weight: 10 },
+  { icon: "🍇", label: "Grape", weight: 8 },
+  { icon: "🍀", label: "Clover", weight: 5 },
+  { icon: "7️⃣", label: "Seven", weight: 3 },
+  { icon: "💎", label: "Diamond", weight: 1 },
 ];
 
 const PAYOUTS = [
@@ -23,8 +28,8 @@ const PAYOUTS = [
     multiplier: 7,
     color: "#ffd700",
   },
-  { condition: "3 iguais", label: "Triple", multiplier: 5, color: "#a855f7" },
-  { condition: "2 iguais", label: "Pair", multiplier: 2, color: "#10b981" },
+  { condition: "3 matching", label: "Triple", multiplier: 5, color: "#a855f7" },
+  { condition: "2 matching", label: "Pair", multiplier: 2, color: "#10b981" },
 ];
 
 function weightedRandom() {
@@ -38,7 +43,8 @@ function weightedRandom() {
 }
 
 function Slots({ balance, setBalance }) {
-  const [betAmount, setBetAmount] = useState(50);
+  const { unlock, updateStats, stats: achStats } = useAchievements();
+const [betAmount, setBetAmount] = useState(50);
   const [reels, setReels] = useState(["🍒", "7️⃣", "🔔"]);
   const [reelSpinning, setReelSpinning] = useState([false, false, false]);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -84,8 +90,8 @@ function Slots({ balance, setBalance }) {
     if (betAmount <= 0 || betAmount > balance) {
       setResultMessage(
         betAmount <= 0
-          ? "❌ Aposta deve ser maior que 0"
-          : "❌ Saldo insuficiente"
+          ? "❌ Bet must be greater than 0"
+          : "❌ Insufficient balance"
       );
       return;
     }
@@ -172,6 +178,25 @@ function Slots({ balance, setBalance }) {
         ...prev.slice(0, 4),
       ]);
 
+      // Achievement triggers
+      unlock('first-pull');
+      const newBalance = won ? balance - betAmount + winAmount : balance - betAmount;
+      updateStats(prev => {
+        const newStreak = won ? prev.winStreak + 1 : 0;
+        return {
+          totalBets: prev.totalBets + 1,
+          slotsPlayed: prev.slotsPlayed + 1,
+          winStreak: newStreak,
+          maxWinStreak: Math.max(prev.maxWinStreak, newStreak),
+          hitZero: prev.hitZero || newBalance <= 0,
+        };
+      });
+      if (won) {
+        if (a === b && b === c) unlock('slots-triple');
+        if (mult === 10) unlock('slots-jackpot');
+        checkWinAchievements({ betAmount, balance, newBalance, unlock, stats: achStats });
+      }
+
       setIsSpinning(false);
     }, evalTime);
   }, [isSpinning, betAmount, balance, setBalance]);
@@ -185,7 +210,7 @@ function Slots({ balance, setBalance }) {
       <div className="slots-header">
         <div className="header-title">
           <span className="title-icon">🎰</span>
-          <h2>Caça-Níquel</h2>
+          <h2>Slot Machine</h2>
         </div>
         <div className="jackpot">
           <span className="jackpot-label">JACKPOT</span>
@@ -267,7 +292,7 @@ function Slots({ balance, setBalance }) {
           <div className="controls">
             {/* Bet row */}
             <div className="bet-section">
-              <label className="bet-label">Aposta</label>
+              <label className="bet-label">Bet</label>
               <div className="bet-row">
                 <div className="bet-presets">
                   <button
@@ -331,7 +356,7 @@ function Slots({ balance, setBalance }) {
               >
                 {isSpinning ? (
                   <>
-                    <span className="spin-icon">🔄</span> Girando…
+                    <span className="spin-icon">🔄</span> Spinning…
                   </>
                 ) : (
                   <>
@@ -354,11 +379,11 @@ function Slots({ balance, setBalance }) {
             {/* Status */}
             <div className="status-bar">
               <div className="stat">
-                <span className="stat-label">Saldo</span>
+                <span className="stat-label">Balance</span>
                 <span className="stat-value cyan">${balance.toFixed(2)}</span>
               </div>
               <div className="stat">
-                <span className="stat-label">Aposta</span>
+                <span className="stat-label">Bet</span>
                 <span className="stat-value">${betAmount.toFixed(2)}</span>
               </div>
               {streak > 1 && (
@@ -401,13 +426,13 @@ function Slots({ balance, setBalance }) {
                 className="btn-reload"
                 onClick={() => {
                   setBalance((p) => p + 1000);
-                  setResultMessage("✅ +$1000 créditos demo");
+                  setResultMessage("✅ +$1000 demo credits");
                 }}
               >
-                + Recarregar Demo
+                + Reload Demo
               </button>
               <span className="demo-note">
-                ⚠️ Apenas demo — sem dinheiro real
+                ⚠️ Demo only — no real money
               </span>
             </div>
           </div>
@@ -416,7 +441,7 @@ function Slots({ balance, setBalance }) {
         {/* Info panel */}
         <div className="info-panel">
           <div className="rules card">
-            <h3>Pagamentos</h3>
+            <h3>Payouts</h3>
             <div className="payout-table">
               {PAYOUTS.map((p, i) => (
                 <div key={i} className="payout-row">
@@ -430,12 +455,12 @@ function Slots({ balance, setBalance }) {
               ))}
             </div>
             <p className="disclaimer">
-              Saldos são simulados. Nenhum dinheiro real envolvido.
+              Balances are simulated. No real money involved.
             </p>
           </div>
 
           <div className="symbol-table card">
-            <h4>Símbolos (raridade)</h4>
+            <h4>Symbols (rarity)</h4>
             <div className="sym-list">
               {[...SYMBOLS].reverse().map((s) => (
                 <div key={s.icon} className="sym-row">
@@ -444,7 +469,7 @@ function Slots({ balance, setBalance }) {
                   <div className="sym-bar-wrap">
                     <div
                       className="sym-bar"
-                      style={{ width: `${(s.weight / 30) * 100}%` }}
+                      style={{ width: `${(s.weight / 25) * 100}%` }}
                     />
                   </div>
                 </div>
@@ -453,11 +478,11 @@ function Slots({ balance, setBalance }) {
           </div>
 
           <div className="tips card">
-            <h4>💡 Dicas</h4>
+            <h4>💡 Tips</h4>
             <ul>
-              <li>Símbolos raros (💎, 7️⃣) pagam mais.</li>
-              <li>Auto-Spin acelera os testes.</li>
-              <li>Gerencie sua aposta conforme o saldo.</li>
+              <li>Rare symbols (💎, 7️⃣) pay more.</li>
+              <li>Auto-Spin speeds up testing.</li>
+              <li>Manage your bet according to your balance.</li>
             </ul>
           </div>
         </div>

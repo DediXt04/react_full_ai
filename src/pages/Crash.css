@@ -1,0 +1,409 @@
+/* ===== CRASH — Casino Neon Dark ===== */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@700;900&display=swap');
+
+.crash-page {
+  width: 100%;
+  font-family: 'Rajdhani', sans-serif;
+  color: #e6eef8;
+}
+
+.crash-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  align-items: start;
+}
+
+/* ==============================
+   BETTING SECTION
+   ============================== */
+.crash-betting {
+  background: rgba(6, 10, 30, 0.7);
+  border: 1px solid rgba(0, 212, 255, 0.12);
+  border-radius: 16px;
+  padding: 1.75rem;
+  backdrop-filter: blur(6px);
+}
+
+.crash-betting h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  text-align: center;
+  margin: 0 0 1.5rem;
+  color: #fff;
+  text-shadow: 0 0 14px rgba(0,212,255,0.3);
+}
+
+.crash-balance-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.crash-balance-item { display: flex; flex-direction: column; gap: 0.2rem; }
+
+.crash-balance-item .label {
+  font-size: 0.65rem;
+  color: #4a6b8a;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.crash-balance-item .amount {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #00d4ff;
+}
+
+/* Form */
+.crash-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.crash-form-group label {
+  display: block;
+  font-size: 0.7rem;
+  color: #4a6b8a;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.5rem;
+}
+
+.crash-input-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 212, 255, 0.12);
+  border-radius: 10px;
+  padding: 0.5rem;
+  transition: border-color 0.3s;
+}
+
+.crash-input-group:focus-within {
+  border-color: rgba(0, 212, 255, 0.4);
+}
+
+.crash-input-group input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #e6eef8;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  outline: none;
+  min-width: 0;
+}
+
+.crash-presets {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-preset {
+  flex: 1;
+  padding: 0.4rem;
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 8px;
+  color: #8ac4d6;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-preset:hover {
+  background: rgba(0, 212, 255, 0.18);
+  color: #00d4ff;
+}
+
+.btn-preset.active {
+  background: rgba(0, 212, 255, 0.25);
+  border-color: #00d4ff;
+  color: #00d4ff;
+}
+
+/* Buttons */
+.crash-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-crash-start {
+  flex: 1;
+  padding: 0.85rem;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 20px rgba(16,185,129,0.3);
+}
+
+.btn-crash-start:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(16,185,129,0.4);
+}
+
+.btn-crash-start:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cashout {
+  flex: 1;
+  padding: 0.85rem;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 20px rgba(245,158,11,0.3);
+  animation: cashout-pulse 1s ease-in-out infinite;
+}
+
+.btn-cashout:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(245,158,11,0.5);
+}
+
+.btn-cashout:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  animation: none;
+}
+
+@keyframes cashout-pulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(245,158,11,0.3); }
+  50% { box-shadow: 0 4px 30px rgba(245,158,11,0.6); }
+}
+
+/* ==============================
+   GRAPH SECTION
+   ============================== */
+.crash-graph-section {
+  background: rgba(6, 10, 30, 0.7);
+  border: 1px solid rgba(0, 212, 255, 0.12);
+  border-radius: 16px;
+  padding: 1.75rem;
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.crash-graph-section h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  text-align: center;
+  margin: 0 0 1.5rem;
+  color: #fff;
+  text-shadow: 0 0 14px rgba(0,212,255,0.3);
+}
+
+.crash-canvas-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.crash-canvas-wrap canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.crash-multiplier-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: 3.5rem;
+  color: #10b981;
+  text-shadow: 0 0 30px rgba(16,185,129,0.5), 0 0 60px rgba(16,185,129,0.2);
+  pointer-events: none;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.crash-multiplier-overlay.crashed {
+  color: #ef4444;
+  text-shadow: 0 0 30px rgba(239,68,68,0.5), 0 0 60px rgba(239,68,68,0.2);
+}
+
+.crash-multiplier-overlay.cashed {
+  color: #f59e0b;
+  text-shadow: 0 0 30px rgba(245,158,11,0.5), 0 0 60px rgba(245,158,11,0.2);
+}
+
+.crash-status {
+  margin-top: 1rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  text-align: center;
+  min-height: 1.5rem;
+}
+
+.crash-status.win {
+  color: #10b981;
+  text-shadow: 0 0 10px rgba(16,185,129,0.4);
+}
+
+.crash-status.lose {
+  color: #ef4444;
+  text-shadow: 0 0 10px rgba(239,68,68,0.4);
+}
+
+/* ==============================
+   HISTORY
+   ============================== */
+.crash-history {
+  margin-top: 2rem;
+}
+
+.crash-history h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #fff;
+  text-shadow: 0 0 14px rgba(0,212,255,0.3);
+}
+
+.crash-history-list {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.crash-history-item {
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.crash-history-item.low { color: #ef4444; }
+.crash-history-item.mid { color: #f59e0b; }
+.crash-history-item.high { color: #10b981; }
+
+/* ==============================
+   INFO SECTION
+   ============================== */
+.crash-info {
+  margin-top: 2rem;
+}
+
+.crash-info h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 1.25rem;
+  color: #fff;
+}
+
+.crash-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.crash-info-card {
+  background: rgba(6, 10, 30, 0.7);
+  border: 1px solid rgba(0, 212, 255, 0.12);
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+  backdrop-filter: blur(6px);
+}
+
+.crash-info-card .info-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.crash-info-card h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.5rem;
+  color: #fff;
+}
+
+.crash-info-card p {
+  font-size: 0.85rem;
+  color: #6b8aaa;
+  line-height: 1.5;
+}
+
+/* Disclaimer */
+.crash-disclaimer {
+  text-align: center;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: #6b8aaa;
+  line-height: 1.6;
+}
+
+/* ==============================
+   RESPONSIVE
+   ============================== */
+@media (max-width: 900px) {
+  .crash-container {
+    grid-template-columns: 1fr;
+  }
+  .crash-info-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .crash-info-grid {
+    grid-template-columns: 1fr;
+  }
+  .crash-multiplier-overlay {
+    font-size: 2.5rem;
+  }
+}

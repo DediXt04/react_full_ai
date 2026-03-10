@@ -1,6 +1,7 @@
+import { Link } from "react-router-dom";
 import "./Footer.css";
 
-function Footer({ onNavigate }) {
+function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
@@ -10,15 +11,15 @@ function Footer({ onNavigate }) {
 
           {/* Brand col */}
           <div className="footer-col footer-brand-col">
-            <div className="footer-logo" onClick={() => onNavigate?.("home")}>
+            <Link to="/" className="footer-logo">
               <span className="footer-logo-icon">🎰</span>
               <div className="footer-brand-text">
                 <span className="footer-brand-name">LuckySpin</span>
                 <span className="footer-brand-tag">DEMO</span>
               </div>
-            </div>
+            </Link>
             <p className="footer-tagline">
-              Plataforma fictícia criada para fins educacionais e de entretenimento. Sem dinheiro real envolvido.
+              Fictional platform created for educational and entertainment purposes. No real money involved.
             </p>
             <div className="social-links">
               {[
@@ -36,18 +37,21 @@ function Footer({ onNavigate }) {
 
           {/* Quick links */}
           <div className="footer-col">
-            <h4 className="footer-heading">Navegação</h4>
+            <h4 className="footer-heading">Navigation</h4>
             <ul className="footer-links">
               {[
-                { label: "Home",   page: "home"     },
-                { label: "Roleta", page: "roulette" },
-                { label: "Slots",  page: "slots"    },
-                { label: "Blackjack", page: "blackjack" },
+                { label: "Home",         to: "/"              },
+                { label: "Roulette",     to: "/roulette"      },
+                { label: "Slots",        to: "/slots"         },
+                { label: "Blackjack",    to: "/blackjack"     },
+                { label: "Crash",        to: "/crash"         },
+                { label: "Mines",        to: "/mines"         },
+                { label: "Achievements", to: "/achievements"  },
               ].map(l => (
-                <li key={l.page}>
-                  <button className="footer-link" onClick={() => onNavigate?.(l.page)}>
+                <li key={l.to}>
+                  <Link to={l.to} className="footer-link">
                     <span className="footer-link-arrow">›</span> {l.label}
-                  </button>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -55,23 +59,24 @@ function Footer({ onNavigate }) {
 
           {/* Games */}
           <div className="footer-col">
-            <h4 className="footer-heading">Jogos</h4>
+            <h4 className="footer-heading">Games</h4>
             <ul className="footer-links">
-              <li><span className="footer-link-static">🎡 Roleta Europeia</span></li>
-              <li><span className="footer-link-static">🎰 Caça-Níquel 3 Bobinas</span></li>
+              <li><span className="footer-link-static">🎡 European Roulette</span></li>
+              <li><span className="footer-link-static">🎰 3-Reel Slot Machine</span></li>
               <li><span className="footer-link-static">🃏 Blackjack</span></li>
-              <li><span className="footer-link-static coming">🎴 Poker (em breve)</span></li>
+              <li><span className="footer-link-static">📈 Crash</span></li>
+              <li><span className="footer-link-static">💣 Mines</span></li>
             </ul>
           </div>
 
           {/* Disclaimer */}
           <div className="footer-col">
-            <h4 className="footer-heading">⚠️ Aviso</h4>
+            <h4 className="footer-heading">⚠️ Warning</h4>
             <p className="footer-disclaimer">
-              Este é um <strong>projeto demo</strong> apenas para fins educacionais.
-              Nenhuma transação real ocorre. Todos os saldos são créditos fictícios.
+              This is a <strong>demo project</strong> for educational purposes only.
+              No real transactions occur. All balances are fictional credits.
               <br /><br />
-              Não é uma plataforma de apostas real.
+              This is not a real gambling platform.
             </p>
           </div>
 
@@ -82,10 +87,10 @@ function Footer({ onNavigate }) {
 
         {/* Bottom bar */}
         <div className="footer-bottom">
-          <p className="footer-copy">© 2026 LuckySpinDEMO — Projeto Demo. Todos os direitos reservados.</p>
+          <p className="footer-copy">© 2026 LuckySpinDEMO — Demo Project. All rights reserved.</p>
           <div className="footer-badges">
-            <span className="badge">🔒 Sem Dinheiro Real</span>
-            <span className="badge">📚 Fins Educacionais</span>
+            <span className="badge">🔒 No Real Money</span>
+            <span className="badge">📚 Educational Only</span>
             <span className="badge">🎮 Demo Only</span>
           </div>
         </div>

@@ -1,4 +1,7 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
+import useAnimatedNumber from "../hooks/useAnimatedNumber";
+import { useAchievements } from "../context/AchievementContext";
+import { checkWinAchievements } from "../utils/achievementHelpers";
 import "./Blackjack.css";
 
 // ─── Deck ────────────────────────────────────────────────────────────────────
@@ -60,11 +63,15 @@ export default function Blackjack({ balance, setBalance }) {
   const [history,     setHistory]     = useState([]);
   const [showDealer,  setShowDealer]  = useState(false);
   const [stats, setStats] = useState({ wins: 0, losses: 0, pushes: 0 });
+  const [doubled, setDoubled] = useState(false);
+  const balanceAtDeal = useRef(0);
+  const animatedBalance = useAnimatedNumber(balance);
+  const { unlock, updateStats, stats: achStats } = useAchievements();
 
   // ── Deal ──
   const handleDeal = useCallback(() => {
     if (betAmount <= 0 || betAmount > balance) {
-      setMessage(betAmount <= 0 ? "❌ Aposta deve ser maior que 0" : "❌ Saldo insuficiente");
+      setMessage(betAmount <= 0 ? "❌ Bet must be greater than 0" : "❌ Insufficient balance");
       return;
     }
 
@@ -80,6 +87,8 @@ export default function Blackjack({ balance, setBalance }) {
     setResult(null);
     setMessage("");
     setLockedBet(betAmount);
+    setDoubled(false);
+    balanceAtDeal.current = balance;
     setBalance(prev => prev - betAmount);
     setStage("playing");
 
@@ -122,11 +131,12 @@ export default function Blackjack({ balance, setBalance }) {
   // ── Double Down ──
   const handleDouble = useCallback(() => {
     if (stage !== "playing" || playerHand.length !== 2) return;
-    if (lockedBet > balance) { setMessage("❌ Saldo insuficiente para dobrar"); return; }
+    if (lockedBet > balance) { setMessage("❌ Insufficient balance to double"); return; }
 
     setBalance(prev => prev - lockedBet);
     const newBet = lockedBet * 2;
     setLockedBet(newBet);
+    setDoubled(true);
 
     const newCard = deck[0];
     const remaining = deck.slice(1);
@@ -186,12 +196,12 @@ export default function Blackjack({ balance, setBalance }) {
       msg = `🃏 BLACKJACK! +$${payout}`;
     } else if (outcome === "win") {
       payout = bet * 2;
-      msg = `✅ Você venceu! +$${payout}`;
+      msg = `✅ You win! +$${payout}`;
     } else if (outcome === "push") {
       payout = bet;
-      msg = `🤝 Empate — aposta devolvida`;
+      msg = `🤝 Push — bet returned`;
     } else {
-      msg = `❌ Dealer vence. -$${bet}`;
+      msg = `❌ Dealer wins. -$${bet}`;
     }
 
     if (payout > 0) setBalance(prev => prev + payout);
@@ -207,7 +217,28 @@ export default function Blackjack({ balance, setBalance }) {
       { outcome, bet, payout, playerTotal: handTotal(pH), dealerTotal: handTotal(dH) },
       ...prev.slice(0, 7)
     ]);
-  }, [setBalance]);
+
+    // Achievement triggers
+    unlock('first-hand');
+    const isWin = outcome === "win" || outcome === "blackjack";
+    const newBalance = balanceAtDeal.current - bet + (payout || 0);
+    updateStats(prev => {
+      const newStreak = isWin ? prev.winStreak + 1 : 0;
+      return {
+        totalBets: prev.totalBets + 1,
+        bjPlayed: prev.bjPlayed + 1,
+        winStreak: newStreak,
+        maxWinStreak: Math.max(prev.maxWinStreak, newStreak),
+        hitZero: prev.hitZero || newBalance <= 0,
+      };
+    });
+    if (isWin) {
+      if (handTotal(pH) === 21) unlock('bj-21');
+      if (outcome === "blackjack") unlock('bj-blackjack');
+      if (doubled) unlock('bj-double-win');
+      checkWinAchievements({ betAmount: bet, balance: balanceAtDeal.current, newBalance, unlock, stats: achStats });
+    }
+  }, [setBalance, unlock, updateStats, doubled]);
 
   // ── Derived ──
   const playerTotal = handTotal(playerHand);
@@ -228,17 +259,17 @@ export default function Blackjack({ balance, setBalance }) {
         </div>
         <div className="bj-chips-row">
           <div className="bj-chip">
-            <span className="bj-chip-label">Saldo</span>
-            <span className="bj-chip-val cyan">${balance.toFixed(0)}</span>
+            <span className="bj-chip-label">Balance</span>
+            <span className="bj-chip-val cyan">${animatedBalance.toFixed(0)}</span>
           </div>
           {lockedBet > 0 && (
             <div className="bj-chip bj-chip-bet">
-              <span className="bj-chip-label">Aposta</span>
+              <span className="bj-chip-label">Bet</span>
               <span className="bj-chip-val gold">${lockedBet}</span>
             </div>
           )}
           <div className="bj-chip">
-            <span className="bj-chip-label">V / D / E</span>
+            <span className="bj-chip-label">W / L / D</span>
             <span className="bj-chip-val stats">{stats.wins} / {stats.losses} / {stats.pushes}</span>
           </div>
         </div>
@@ -262,17 +293,26 @@ export default function Blackjack({ balance, setBalance }) {
                 {stage === "idle"
                   ? <div className="bj-card bj-card-empty" />
                   : dealerHand.map((c, i) => {
-                      const hidden = !showDealer && i === 1;
+                      const isHidden = i === 1;
+                      if (isHidden) {
+                        return (
+                          <div key={i} className="bj-card-flip" style={{ animation: 'card-in 0.3s cubic-bezier(.2,1.4,.4,1) forwards' }}>
+                            <div className={`bj-card-flip-inner ${showDealer ? "flipped" : ""}`}>
+                              <div className="bj-card-flip-front">
+                                <span className="bj-back-icon">🂠</span>
+                              </div>
+                              <div className={`bj-card-flip-back ${isRed(c.suit) ? "red" : "black"}`}>
+                                <span className="bj-rank">{c.rank}</span>
+                                <span className="bj-suit">{c.suit}</span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
                       return (
-                        <div key={i} className={`bj-card ${hidden ? "bj-card-back" : (isRed(c.suit) ? "red" : "black")} ${result && (result === "lose" || result === "push") && !isBust(dealerHand) ? "" : ""}`}>
-                          {hidden ? (
-                            <span className="bj-back-icon">🂠</span>
-                          ) : (
-                            <>
-                              <span className="bj-rank">{c.rank}</span>
-                              <span className="bj-suit">{c.suit}</span>
-                            </>
-                          )}
+                        <div key={i} className={`bj-card ${isRed(c.suit) ? "red" : "black"} ${result && (result === "lose" || result === "push") && !isBust(dealerHand) ? "" : ""}`}>
+                          <span className="bj-rank">{c.rank}</span>
+                          <span className="bj-suit">{c.suit}</span>
                         </div>
                       );
                     })
@@ -287,12 +327,12 @@ export default function Blackjack({ balance, setBalance }) {
             <div className="bj-divider">
               {stage !== "idle" && stage !== "result" && (
                 <div className="bj-turn-indicator">
-                  {stage === "playing" ? "Sua vez" : "Dealer jogando…"}
+                  {stage === "playing" ? "Your turn" : "Dealer playing…"}
                 </div>
               )}
               {result && (
                 <div className={`bj-result-badge ${resultColor}`}>
-                  {result === "blackjack" ? "BLACKJACK!" : result === "win" ? "VITÓRIA" : result === "lose" ? "DERROTA" : "EMPATE"}
+                  {result === "blackjack" ? "BLACKJACK!" : result === "win" ? "WIN" : result === "lose" ? "LOSS" : "PUSH"}
                 </div>
               )}
             </div>
@@ -311,7 +351,7 @@ export default function Blackjack({ balance, setBalance }) {
                 }
               </div>
               <div className="bj-hand-label player-label">
-                🧑 Você
+                🧑 You
                 {playerHand.length > 0 && (
                   <span className={`bj-total ${playerTotal > 21 ? "bust" : playerTotal === 21 ? "blackjack-total" : ""}`}>
                     {playerTotal}{playerTotal > 21 ? " BUST" : ""}
@@ -335,7 +375,7 @@ export default function Blackjack({ balance, setBalance }) {
             {stage === "idle" || stage === "result" ? (
               <div className="bj-bet-section">
                 <div className="bj-bet-row">
-                  <label className="bj-bet-label">Aposta</label>
+                  <label className="bj-bet-label">Bet</label>
                   <div className="bj-presets">
                     {[10, 25, 50, 100, 250].map(v => (
                       <button key={v} className={`bj-preset ${betAmount === v ? "active" : ""}`}
@@ -354,7 +394,7 @@ export default function Blackjack({ balance, setBalance }) {
                   />
                 </div>
                 <button className="bj-btn-deal" onClick={handleDeal} disabled={balance < 1}>
-                  {stage === "idle" ? "🃏 Distribuir Cartas" : "🔄 Nova Mão"}
+                  {stage === "idle" ? "🃏 Deal Cards" : "🔄 New Hand"}
                 </button>
               </div>
             ) : (
@@ -379,31 +419,31 @@ export default function Blackjack({ balance, setBalance }) {
 
           {/* Rules card */}
           <div className="bj-panel">
-            <h4>Como Jogar</h4>
+            <h4>How to Play</h4>
             <div className="bj-rules">
-              <div className="bj-rule"><span className="rule-icon">🎯</span><span>Chegue mais perto de 21 que o dealer sem passar</span></div>
-              <div className="bj-rule"><span className="rule-icon">➕</span><span><strong>Hit</strong> — Pede mais uma carta</span></div>
-              <div className="bj-rule"><span className="rule-icon">✋</span><span><strong>Stand</strong> — Fica com as cartas atuais</span></div>
-              <div className="bj-rule"><span className="rule-icon">✖️</span><span><strong>Double</strong> — Dobra a aposta, recebe 1 carta</span></div>
-              <div className="bj-rule"><span className="rule-icon">🃏</span><span><strong>Blackjack</strong> — Ás + figura = paga 3:2</span></div>
-              <div className="bj-rule"><span className="rule-icon">🤖</span><span>Dealer para com 17 ou mais</span></div>
+              <div className="bj-rule"><span className="rule-icon">🎯</span><span>Get closer to 21 than the dealer without going over</span></div>
+              <div className="bj-rule"><span className="rule-icon">➕</span><span><strong>Hit</strong> — Draw one more card</span></div>
+              <div className="bj-rule"><span className="rule-icon">✋</span><span><strong>Stand</strong> — Keep your current cards</span></div>
+              <div className="bj-rule"><span className="rule-icon">✖️</span><span><strong>Double</strong> — Double your bet, receive 1 card</span></div>
+              <div className="bj-rule"><span className="rule-icon">🃏</span><span><strong>Blackjack</strong> — Ace + face card = pays 3:2</span></div>
+              <div className="bj-rule"><span className="rule-icon">🤖</span><span>Dealer stands on 17 or higher</span></div>
             </div>
           </div>
 
           {/* Card values */}
           <div className="bj-panel">
-            <h4>Valores</h4>
+            <h4>Card Values</h4>
             <div className="bj-values">
-              <div className="bj-val-row"><span>A</span><span>1 ou 11</span></div>
+              <div className="bj-val-row"><span>A</span><span>1 or 11</span></div>
               <div className="bj-val-row"><span>J / Q / K</span><span>10</span></div>
-              <div className="bj-val-row"><span>2 – 10</span><span>Valor nominal</span></div>
+              <div className="bj-val-row"><span>2 – 10</span><span>Face value</span></div>
             </div>
           </div>
 
           {/* History */}
           {history.length > 0 && (
             <div className="bj-panel">
-              <h4>Histórico</h4>
+              <h4>History</h4>
               <div className="bj-history">
                 {history.map((h, i) => (
                   <div key={i} className={`bj-hist-row ${h.outcome === "win" || h.outcome === "blackjack" ? "win" : h.outcome === "lose" ? "lose" : "push"}`}>
@@ -422,12 +462,12 @@ export default function Blackjack({ balance, setBalance }) {
 
           {/* Payouts */}
           <div className="bj-panel">
-            <h4>Pagamentos</h4>
+            <h4>Payouts</h4>
             <div className="bj-payouts">
               <div className="bj-payout-row"><span>Blackjack</span><span className="payout-val gold">3:2</span></div>
-              <div className="bj-payout-row"><span>Vitória</span><span className="payout-val green">1:1</span></div>
-              <div className="bj-payout-row"><span>Empate</span><span className="payout-val">Devolve</span></div>
-              <div className="bj-payout-row"><span>Derrota</span><span className="payout-val red">-1:1</span></div>
+              <div className="bj-payout-row"><span>Win</span><span className="payout-val green">1:1</span></div>
+              <div className="bj-payout-row"><span>Push</span><span className="payout-val">Returns</span></div>
+              <div className="bj-payout-row"><span>Loss</span><span className="payout-val red">-1:1</span></div>
             </div>
           </div>
 

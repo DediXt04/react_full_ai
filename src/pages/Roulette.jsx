@@ -1,7 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
+import useAnimatedNumber from '../hooks/useAnimatedNumber'
+import { useAchievements } from '../context/AchievementContext'
+import { checkWinAchievements } from '../utils/achievementHelpers'
 import './Roulette.css'
 
 function Roulette({ balance, setBalance }) {
+  const animatedBalance = useAnimatedNumber(balance)
+  const { unlock, updateStats, stats } = useAchievements()
   const [betAmount, setBetAmount] = useState(100)
   const [selectedColor, setSelectedColor] = useState('red')
   const [isSpinning, setIsSpinning] = useState(false)
@@ -9,6 +14,7 @@ function Roulette({ balance, setBalance }) {
   const [resultMessage, setResultMessage] = useState('')
   const [spinHistory, setSpinHistory] = useState([])
   const [rotation, setRotation] = useState(0)
+  const [showConfetti, setShowConfetti] = useState(false)
   const currentRotation = useRef(0)
 
   const rouletteNumbers = [
@@ -124,12 +130,14 @@ function Roulette({ balance, setBalance }) {
 
       if (playerWon) {
         if (selectedColor === 'green') {
-          setResultMessage(`🎉 JACKPOT! Você ganhou $${winnings.toFixed(2)} no Verde ${winningNumber}!`)
+          setResultMessage(`🎉 JACKPOT! You won $${winnings.toFixed(2)} on Green ${winningNumber}!`)
         } else {
-          setResultMessage(`✨ Você ganhou $${winnings.toFixed(2)} no ${selectedColor.toUpperCase()}!`)
+          setResultMessage(`✨ You won $${winnings.toFixed(2)} on ${selectedColor.toUpperCase()}!`)
         }
+        setShowConfetti(true)
+        setTimeout(() => setShowConfetti(false), 2000)
       } else {
-        setResultMessage(`❌ Você perdeu $${betAmount.toFixed(2)}. A bola parou no ${winningColor.toUpperCase()} ${winningNumber}`)
+        setResultMessage(`❌ You lost $${betAmount.toFixed(2)}. The ball landed on ${winningColor.toUpperCase()} ${winningNumber}`)
       }
 
       setSpinHistory(prev => [
@@ -142,6 +150,28 @@ function Roulette({ balance, setBalance }) {
         },
         ...prev.slice(0, 9)
       ])
+
+      // Achievement triggers
+      unlock('first-spin')
+      if (selectedColor === 'green') unlock('green-bet')
+      updateStats(prev => {
+        const newBets = prev.totalBets + 1
+        const newRouletteWins = prev.rouletteWins + (playerWon ? 1 : 0)
+        const newStreak = playerWon ? prev.winStreak + 1 : 0
+        const maxStreak = Math.max(prev.maxWinStreak, newStreak)
+        return {
+          totalBets: newBets,
+          roulettePlayed: prev.roulettePlayed + 1,
+          rouletteWins: newRouletteWins,
+          winStreak: newStreak,
+          maxWinStreak: maxStreak,
+          hitZero: prev.hitZero || newBalance === 0,
+        }
+      })
+      if (playerWon) {
+        if (selectedColor === 'green') unlock('green-win')
+        checkWinAchievements({ betAmount, balance, newBalance, unlock, stats })
+      }
 
       setIsSpinning(false)
     }, 4000)
@@ -165,7 +195,7 @@ function Roulette({ balance, setBalance }) {
           <div className="balance-info card">
             <div className="balance-item">
               <span className="label">Current Balance</span>
-              <span className="amount">${balance.toFixed(2)}</span>
+              <span className="amount">${animatedBalance.toFixed(2)}</span>
             </div>
             <div className="balance-item">
               <span className="label">Bet Amount</span>
@@ -199,12 +229,12 @@ function Roulette({ balance, setBalance }) {
               <button className={`color-btn green-btn ${selectedColor === 'green' ? 'active' : ''}`} onClick={() => setSelectedColor('green')} disabled={isSpinning}>🟢 GREEN</button>
             </div>
             <p className="color-info">
-              {selectedColor === 'green' ? '🟢 GREEN paga 35:1 (Alto Risco, Alto Retorno)' : `${selectedColor.toUpperCase()} paga 1:1`}
+              {selectedColor === 'green' ? '🟢 GREEN pays 35:1 (High Risk, High Reward)' : `${selectedColor.toUpperCase()} pays 1:1`}
             </p>
           </div>
 
           <button className="btn-primary btn-spin" onClick={handleSpin} disabled={isSpinning || balance === 0}>
-            {isSpinning ? '🎡 GIRANDO...' : '🎰 GIRAR A ROLETA'}
+            {isSpinning ? '🎡 SPINNING...' : '🎰 SPIN THE WHEEL'}
           </button>
 
           <button className="btn-secondary" onClick={handleReset} disabled={isSpinning} style={{ width: '100%', marginTop: '1rem' }}>
@@ -219,8 +249,8 @@ function Roulette({ balance, setBalance }) {
 
           {balance === 0 && (
             <div className="game-over-message card">
-              <p>😢 Você ficou sem créditos!</p>
-              <p style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>Recarregue a página para resetar o saldo.</p>
+              <p>😢 You ran out of credits!</p>
+              <p style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>Reload the page to reset your balance.</p>
             </div>
           )}
         </div>
@@ -304,10 +334,28 @@ function Roulette({ balance, setBalance }) {
 
       <div className="final-disclaimer card">
         <p>
-          ⚠️ <strong>Lembre-se:</strong> Este é um demo fictício. Todos os saldos e transações são simulados.
-          Nenhum dinheiro real está envolvido. Apenas para fins educacionais.
+          ⚠️ <strong>Remember:</strong> This is a fictional demo. All balances and transactions are simulated.
+          No real money is involved. For educational purposes only.
         </p>
       </div>
+
+      {showConfetti && (
+        <div className="roulette-confetti-wrap">
+          {Array.from({ length: 40 }).map((_, i) => (
+            <div
+              key={i}
+              className="roulette-confetti"
+              style={{
+                left: `${Math.random() * 100}%`,
+                background: ['#ef4444','#10b981','#ffd700','#00d4ff','#a855f7','#ec4899'][i % 6],
+                animationDelay: `${Math.random() * 0.6}s`,
+                width: `${6 + Math.random() * 8}px`,
+                height: `${6 + Math.random() * 8}px`,
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

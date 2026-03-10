@@ -1,0 +1,271 @@
+/* ===== ACHIEVEMENTS PAGE — Casino Neon ===== */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@700;900&display=swap');
+
+.ach-page {
+  font-family: 'Rajdhani', sans-serif;
+  color: #e6eef8;
+  padding: 1.5rem;
+  min-height: 80vh;
+}
+
+/* ===== Header ===== */
+.ach-header {
+  margin-bottom: 1.5rem;
+}
+
+.ach-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+.ach-title-icon { font-size: 1.8rem; }
+.ach-header h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 3px;
+  color: #fff;
+  margin: 0;
+  text-shadow: 0 0 18px rgba(255,215,0,0.35);
+}
+
+/* Progress */
+.ach-progress-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ach-progress-bar {
+  flex: 1;
+  height: 14px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 7px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.ach-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #cd7f32, #ffd700);
+  border-radius: 7px;
+  transition: width 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 12px rgba(255,215,0,0.25);
+  position: relative;
+}
+.ach-progress-pct {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.55rem;
+  font-weight: 900;
+  color: #1a0800;
+  letter-spacing: 1px;
+}
+
+.ach-progress-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  color: #7a9bbf;
+  white-space: nowrap;
+}
+
+/* Rarity counters */
+.ach-rarity-counts {
+  display: flex;
+  gap: 0.75rem;
+}
+.ach-rc-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.ach-rc-badge.bronze {
+  background: rgba(205,127,50,0.1);
+  border: 1px solid rgba(205,127,50,0.25);
+  color: #cd7f32;
+}
+.ach-rc-badge.silver {
+  background: rgba(192,192,192,0.1);
+  border: 1px solid rgba(192,192,192,0.25);
+  color: #c0c0c0;
+}
+.ach-rc-badge.gold {
+  background: rgba(255,215,0,0.1);
+  border: 1px solid rgba(255,215,0,0.25);
+  color: #ffd700;
+}
+.ach-rc-icon { font-size: 1rem; }
+.ach-rc-num { letter-spacing: 1px; }
+
+/* ===== Filters ===== */
+.ach-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.ach-filter-btn {
+  padding: 0.4rem 0.85rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  background: rgba(0, 212, 255, 0.05);
+  color: #7a9bbf;
+  border: 1px solid rgba(0, 212, 255, 0.12);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ach-filter-btn:hover {
+  background: rgba(0, 212, 255, 0.1);
+  color: #00d4ff;
+  border-color: rgba(0, 212, 255, 0.3);
+}
+.ach-filter-btn.active {
+  background: rgba(0, 212, 255, 0.15);
+  color: #00d4ff;
+  border-color: rgba(0, 212, 255, 0.5);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.1);
+}
+
+/* ===== Grid ===== */
+.ach-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+/* ===== Cards ===== */
+.ach-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 14px;
+  position: relative;
+  transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+  animation: ach-card-in 0.4s ease both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(8px);
+}
+
+@keyframes ach-card-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Rarity-specific unlocked backgrounds */
+.ach-card.bronze.unlocked {
+  background: linear-gradient(135deg, rgba(205,127,50,0.08), rgba(6,10,30,0.8));
+  border-color: rgba(205,127,50,0.2);
+}
+.ach-card.silver.unlocked {
+  background: linear-gradient(135deg, rgba(192,192,192,0.08), rgba(6,10,30,0.8));
+  border-color: rgba(192,192,192,0.2);
+}
+.ach-card.gold.unlocked {
+  background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(6,10,30,0.8));
+  border-color: rgba(255,215,0,0.25);
+  box-shadow: 0 0 24px rgba(255,215,0,0.06);
+  animation: ach-card-in 0.4s ease both, gold-glow 3s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 40ms), 0s;
+}
+
+@keyframes gold-glow {
+  0%, 100% { box-shadow: 0 0 24px rgba(255,215,0,0.06); }
+  50%      { box-shadow: 0 0 32px rgba(255,215,0,0.14); }
+}
+
+/* Locked cards */
+.ach-card.locked {
+  background: rgba(6, 10, 30, 0.5);
+  border-color: rgba(255,255,255,0.04);
+  opacity: 0.55;
+}
+.ach-card.locked .ach-card-icon {
+  animation: lock-pulse 2.5s ease-in-out infinite;
+}
+@keyframes lock-pulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.8; }
+}
+
+/* Hover */
+.ach-card.unlocked:hover {
+  transform: translateY(-4px);
+}
+.ach-card.bronze.unlocked:hover { box-shadow: 0 8px 30px rgba(205,127,50,0.12); }
+.ach-card.silver.unlocked:hover { box-shadow: 0 8px 30px rgba(192,192,192,0.12); }
+.ach-card.gold.unlocked:hover   { box-shadow: 0 8px 30px rgba(255,215,0,0.18); }
+
+/* Icon */
+.ach-card-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Body */
+.ach-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.ach-card-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.5px;
+}
+.ach-card.locked .ach-card-title { color: #4a6b8a; }
+
+.ach-card-desc {
+  font-size: 0.82rem;
+  color: #7a9bbf;
+  line-height: 1.45;
+}
+
+/* Rarity badge */
+.ach-card-rarity {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.55rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.ach-rarity-bronze { color: #cd7f32; background: rgba(205,127,50,0.12); border: 1px solid rgba(205,127,50,0.3); }
+.ach-rarity-silver { color: #c0c0c0; background: rgba(192,192,192,0.12); border: 1px solid rgba(192,192,192,0.3); }
+.ach-rarity-gold   { color: #ffd700; background: rgba(255,215,0,0.12);   border: 1px solid rgba(255,215,0,0.3); }
+
+/* Empty state */
+.ach-empty {
+  text-align: center;
+  padding: 3rem;
+  color: #4a6b8a;
+  font-size: 1rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .ach-grid { grid-template-columns: 1fr; }
+  .ach-card { padding: 1rem; }
+  .ach-filters { gap: 0.35rem; }
+  .ach-filter-btn { padding: 0.3rem 0.6rem; font-size: 0.8rem; }
+}
