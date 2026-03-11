@@ -1,6 +1,6 @@
 # 🎰 LuckySpinDEMO
 
-> *"Sim, até esse README foi escrito por IA. Inclusive essa frase. E a atualização dele também. E a atualização da atualização. É IAs o caminho inteiro pra baixo."*
+> _"Sim, até esse README foi escrito por IA. Inclusive essa frase. E a atualização dele também. E a atualização da atualização. É IAs o caminho inteiro pra baixo."_
 
 ---
 
@@ -14,14 +14,14 @@ Sabe aquela sensação de jogar fora seu patrimônio em um cassino de verdade? A
 
 ## Jogos disponíveis
 
-| Jogo | Descrição honesta |
-|------|------------------|
-| 🎡 Roleta | Você escolhe vermelho ou preto. A bola decide que não é nenhum dos dois. Agora com auto-spin pra automatizar a decepção. |
-| 🎰 Slots | Nove emojis competem pela sua atenção. As chances de ganhar diminuíram — chamamos isso de "balanceamento". Auto-spin incluso pra quem quer perder no piloto automático. |
-| 🃏 Blackjack | Você pede mais uma carta quando não devia. Sempre. O dealer agora *realmente* pede cartas, porque antes ele esquecia. |
-| 📈 Crash | Um número sobe e você precisa clicar antes que caia. Basicamente seu portfólio de cripto em formato de jogo. O gráfico agora continua subindo depois do cashout pra maximizar seu arrependimento. |
-| 💣 Mines | Clique em quadrados e torça pra não explodir. Tiles brilhantes que parecem esmeraldas — pra você se sentir rico 0.3 segundos antes de pisar numa mina. |
-| 📍 Plinko | Solte uma bolinha e reze. Ela quica por pinos, desvia pra onde quer, e cai num multiplicador que provavelmente é 0.2×. Física simulada pra te dar a ilusão de controle. |
+| Jogo         | Descrição honesta                                                                                                                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🎡 Roleta    | Você escolhe vermelho ou preto. A bola decide que não é nenhum dos dois. Agora com auto-spin pra automatizar a decepção.                                                                          |
+| 🎰 Slots     | Nove emojis competem pela sua atenção. As chances de ganhar diminuíram — chamamos isso de "balanceamento". Auto-spin incluso pra quem quer perder no piloto automático.                           |
+| 🃏 Blackjack | Você pede mais uma carta quando não devia. Sempre. O dealer agora _realmente_ pede cartas, porque antes ele esquecia.                                                                             |
+| 📈 Crash     | Um número sobe e você precisa clicar antes que caia. Basicamente seu portfólio de cripto em formato de jogo. O gráfico agora continua subindo depois do cashout pra maximizar seu arrependimento. |
+| 💣 Mines     | Clique em quadrados e torça pra não explodir. Tiles brilhantes que parecem esmeraldas — pra você se sentir rico 0.3 segundos antes de pisar numa mina.                                            |
+| 📍 Plinko    | Solte uma bolinha e reze. Ela quica por pinos, desvia pra onde quer, e cai num multiplicador que provavelmente é 0.2×. Física simulada pra te dar a ilusão de controle.                           |
 
 ---
 
@@ -98,12 +98,12 @@ src/
 
 46 conquistas organizadas por raridade, porque gamificação sobre gamificação é exatamente o que o mundo precisava.
 
-| Raridade | Qtd | Exemplos | Descrição real |
-|----------|-----|----------|----------------|
-| 🥉 Bronze | 11 | First Spin, Ball Dropper, Chicken | "Parabéns, você clicou num botão" |
-| 🥈 Prata | 14 | On Fire (3 wins), Instant Regret (mina no 1º click), Unlucky (5 losses) | "Parabéns, o Math.random() te favoreceu. Ou não." |
-| 🥇 Ouro | 17 | Unstoppable (7 wins), Jackpot Lane (100× no Plinko), Astronaut (50× no Crash) | "Parabéns, você deveria ter parado enquanto estava ganhando" |
-| 💜 Lendário | 4 | No Life (500 bets), Wolf of Wall Street ($25k) | "Parabéns, você precisa sair de casa" |
+| Raridade    | Qtd | Exemplos                                                                      | Descrição real                                               |
+| ----------- | --- | ----------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| 🥉 Bronze   | 11  | First Spin, Ball Dropper, Chicken                                             | "Parabéns, você clicou num botão"                            |
+| 🥈 Prata    | 14  | On Fire (3 wins), Instant Regret (mina no 1º click), Unlucky (5 losses)       | "Parabéns, o Math.random() te favoreceu. Ou não."            |
+| 🥇 Ouro     | 17  | Unstoppable (7 wins), Jackpot Lane (100× no Plinko), Astronaut (50× no Crash) | "Parabéns, você deveria ter parado enquanto estava ganhando" |
+| 💜 Lendário | 4   | No Life (500 bets), Wolf of Wall Street ($25k)                                | "Parabéns, você precisa sair de casa"                        |
 
 ---
 
@@ -112,8 +112,9 @@ src/
 O jogo mais recente. Uma bolinha dourada cai por uma grade de pinos, quicando aleatoriamente pra esquerda ou direita em cada nível (Galton board). No fundo, multiplicadores coloridos esperam — dos generosos 1000× nas bordas aos deprimentes 0.2× no centro.
 
 **Configurações:**
+
 - **Linhas:** 8, 12 ou 16 — mais linhas = mais caos = mais arrependimento
-- **Risco:** Low, Medium, High — pra quem quer controlar a *intensidade* da decepção
+- **Risco:** Low, Medium, High — pra quem quer controlar a _intensidade_ da decepção
 - **EV ≈ $1.00** — matematicamente justo. Emocionalmente devastador.
 
 Canvas com requestAnimationFrame, ease-in pra gravidade, ease-out pra deflexão. Porque a física de uma bolinha de cassino falso merece mais engenharia que muita startup.
@@ -138,13 +139,13 @@ Stale closure. O `cashOut` lia `multiplier` do state do React, mas o `setMultipl
 Cada pino tem 50% de chance de ir pra esquerda ou direita. Distribuição binomial. EV ≈ $1.00 pra toda configuração. A casa ganha ~1-2%. Então sim, é justo. Você que não tem sorte.
 
 **Posso usar isso para aprender sobre jogos de azar?**
-Sim, e a principal lição é: *a casa sempre vence*. Testamos. A IA confirmou. Matemática conferiu.
+Sim, e a principal lição é: _a casa sempre vence_. Testamos. A IA confirmou. Matemática conferiu.
 
 **Você realmente deixou uma IA escrever tudo?**
 Sim. O dev abriu o Copilot, descreveu o projeto em português informal, e foi tomar café. Voltou com um cassino funcional de 6 jogos, 46 achievements, física de Plinko, e um README que sabe mais sobre o projeto que o próprio dev. Esse é o estado da engenharia de software em 2026.
 
 **O código é bom?**
-É código de IA. Funciona perfeitamente até o momento em que você tenta entender por quê. Mas pelo menos agora está *refatorado* — achievements centralizados, refs sincronizados, design padronizado. Uma bagunça *organizada*.
+É código de IA. Funciona perfeitamente até o momento em que você tenta entender por quê. Mas pelo menos agora está _refatorado_ — achievements centralizados, refs sincronizados, design padronizado. Uma bagunça _organizada_.
 
 ---
 
@@ -155,5 +156,5 @@ Este projeto **não envolve dinheiro real**. Nenhuma transação ocorre. Nenhum 
 Se você tem problemas com jogos de azar, procure ajuda profissional.
 Se você tem problemas com usar IA para escrever todo o seu código, bem-vindo a 2026.
 
-*Feito com React, Copilot, Claude, e uma quantidade preocupante de fé em Math.random().*
-*70 modules. 311KB de JavaScript. 46 achievements. 6 jogos. Zero arrependimentos.*
+_Feito com React, Copilot, Claude, e uma quantidade preocupante de fé em Math.random()._
+_70 modules. 311KB de JavaScript. 46 achievements. 6 jogos. Zero arrependimentos._
