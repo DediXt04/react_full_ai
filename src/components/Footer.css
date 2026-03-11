@@ -214,4 +214,9 @@
 
 @media (max-width: 380px) {
   .badge { font-size: 0.55rem; padding: 0.2rem 0.5rem; }
+  .footer-heading { font-size: 0.6rem; letter-spacing: 1.5px; }
+  .footer-link { font-size: 0.85rem; }
+  .social-links { flex-wrap: wrap; }
+  .footer-tagline { font-size: 0.82rem; }
+  .footer-inner { padding: 2rem 0.75rem 1rem; }
 }

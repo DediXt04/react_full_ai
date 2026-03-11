@@ -15,6 +15,9 @@ function Roulette({ balance, setBalance }) {
   const [spinHistory, setSpinHistory] = useState([])
   const [rotation, setRotation] = useState(0)
   const [showConfetti, setShowConfetti] = useState(false)
+  const [autoSpins, setAutoSpins] = useState(0) // 0=off, -1=infinite, N=remaining
+  const autoRef = useRef(0)
+  const handleSpinRef = useRef(null)
   const currentRotation = useRef(0)
 
   const rouletteNumbers = [
@@ -26,6 +29,18 @@ function Roulette({ balance, setBalance }) {
     if (num === 0) return 'green'
     const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
     return redNumbers.includes(num) ? 'red' : 'black'
+  }
+
+  // Keep ref in sync for closure access
+  useEffect(() => { autoRef.current = autoSpins }, [autoSpins])
+
+  const stopAuto = () => { setAutoSpins(0); autoRef.current = 0 }
+
+  const startAuto = (count) => {
+    setAutoSpins(count)
+    autoRef.current = count
+    // Trigger the first spin immediately
+    setTimeout(() => handleSpinRef.current?.(), 50)
   }
 
   const segmentAngle = 360 / rouletteNumbers.length
@@ -159,23 +174,46 @@ function Roulette({ balance, setBalance }) {
         const newRouletteWins = prev.rouletteWins + (playerWon ? 1 : 0)
         const newStreak = playerWon ? prev.winStreak + 1 : 0
         const maxStreak = Math.max(prev.maxWinStreak, newStreak)
+        const newLossStreak = playerWon ? 0 : (prev.lossStreak || 0) + 1
+        const maxLoss = Math.max(prev.maxLossStreak || 0, newLossStreak)
         return {
           totalBets: newBets,
           roulettePlayed: prev.roulettePlayed + 1,
           rouletteWins: newRouletteWins,
           winStreak: newStreak,
           maxWinStreak: maxStreak,
+          lossStreak: newLossStreak,
+          maxLossStreak: maxLoss,
           hitZero: prev.hitZero || newBalance === 0,
         }
       })
+      if (betAmount >= 500) unlock('big-bet')
       if (playerWon) {
         if (selectedColor === 'green') unlock('green-win')
         checkWinAchievements({ betAmount, balance, newBalance, unlock, stats })
       }
 
       setIsSpinning(false)
+
+      // Auto-spin: queue next if active
+      const remaining = autoRef.current
+      if (remaining !== 0 && newBalance > 0 && betAmount <= newBalance) {
+        if (remaining > 0) {
+          const next = remaining - 1
+          setAutoSpins(next)
+          autoRef.current = next
+          if (next > 0) setTimeout(() => handleSpinRef.current?.(), 800)
+        } else {
+          // remaining === -1 means infinite
+          setTimeout(() => handleSpinRef.current?.(), 800)
+        }
+      } else if (remaining !== 0) {
+        stopAuto()
+      }
     }, 4000)
   }
+
+  handleSpinRef.current = handleSpin
 
   const handleReset = () => {
     setResult(null)
@@ -183,6 +221,8 @@ function Roulette({ balance, setBalance }) {
     setBetAmount(100)
     setSelectedColor('red')
   }
+
+  const isAuto = autoSpins !== 0
 
   return (
     <div className="roulette-page fade-in">
@@ -206,10 +246,10 @@ function Roulette({ balance, setBalance }) {
           <div className="form-group">
             <label>Bet Amount ($)</label>
             <div className="bet-input-group">
-              <button className="btn-preset" onClick={() => setBetAmount(Math.max(10, Math.floor(balance / 10)))} disabled={isSpinning}>1/10</button>
-              <button className="btn-preset" onClick={() => setBetAmount(Math.max(10, Math.floor(balance / 5)))} disabled={isSpinning}>1/5</button>
-              <button className="btn-preset" onClick={() => setBetAmount(Math.max(10, Math.floor(balance / 2)))} disabled={isSpinning}>1/2</button>
-              <button className="btn-preset" onClick={() => setBetAmount(Math.floor(balance))} disabled={isSpinning}>All In</button>
+              <button className="btn-preset" onClick={() => setBetAmount(Math.max(10, Math.floor(balance / 10)))} disabled={isSpinning || isAuto}>1/10</button>
+              <button className="btn-preset" onClick={() => setBetAmount(Math.max(10, Math.floor(balance / 5)))} disabled={isSpinning || isAuto}>1/5</button>
+              <button className="btn-preset" onClick={() => setBetAmount(Math.max(10, Math.floor(balance / 2)))} disabled={isSpinning || isAuto}>1/2</button>
+              <button className="btn-preset" onClick={() => setBetAmount(Math.floor(balance))} disabled={isSpinning || isAuto}>All In</button>
             </div>
             <input
               type="number"
@@ -217,27 +257,46 @@ function Roulette({ balance, setBalance }) {
               max={Math.floor(balance)}
               value={Math.floor(betAmount)}
               onChange={(e) => setBetAmount(Math.max(1, Math.min(Math.floor(balance), parseInt(e.target.value) || 0)))}
-              disabled={isSpinning}
+              disabled={isSpinning || isAuto}
             />
           </div>
 
           <div className="form-group">
             <label>Select Color</label>
             <div className="color-buttons">
-              <button className={`color-btn red-btn ${selectedColor === 'red' ? 'active' : ''}`} onClick={() => setSelectedColor('red')} disabled={isSpinning}>🔴 RED</button>
-              <button className={`color-btn black-btn ${selectedColor === 'black' ? 'active' : ''}`} onClick={() => setSelectedColor('black')} disabled={isSpinning}>⚫ BLACK</button>
-              <button className={`color-btn green-btn ${selectedColor === 'green' ? 'active' : ''}`} onClick={() => setSelectedColor('green')} disabled={isSpinning}>🟢 GREEN</button>
+              <button className={`color-btn red-btn ${selectedColor === 'red' ? 'active' : ''}`} onClick={() => setSelectedColor('red')} disabled={isSpinning || isAuto}>🔴 RED</button>
+              <button className={`color-btn black-btn ${selectedColor === 'black' ? 'active' : ''}`} onClick={() => setSelectedColor('black')} disabled={isSpinning || isAuto}>⚫ BLACK</button>
+              <button className={`color-btn green-btn ${selectedColor === 'green' ? 'active' : ''}`} onClick={() => setSelectedColor('green')} disabled={isSpinning || isAuto}>🟢 GREEN</button>
             </div>
             <p className="color-info">
               {selectedColor === 'green' ? '🟢 GREEN pays 35:1 (High Risk, High Reward)' : `${selectedColor.toUpperCase()} pays 1:1`}
             </p>
           </div>
 
-          <button className="btn-primary btn-spin" onClick={handleSpin} disabled={isSpinning || balance === 0}>
+          <button className="btn-primary btn-spin" onClick={handleSpin} disabled={isSpinning || balance === 0 || autoSpins !== 0}>
             {isSpinning ? '🎡 SPINNING...' : '🎰 SPIN THE WHEEL'}
           </button>
 
-          <button className="btn-secondary" onClick={handleReset} disabled={isSpinning} style={{ width: '100%', marginTop: '1rem' }}>
+          <div className="auto-spin-section">
+            {autoSpins === 0 ? (
+              <>
+                <span className="auto-label">AUTO</span>
+                <button className="btn-auto" onClick={() => startAuto(5)} disabled={isSpinning || balance === 0}>5×</button>
+                <button className="btn-auto" onClick={() => startAuto(10)} disabled={isSpinning || balance === 0}>10×</button>
+                <button className="btn-auto" onClick={() => startAuto(25)} disabled={isSpinning || balance === 0}>25×</button>
+                <button className="btn-auto btn-auto-inf" onClick={() => startAuto(-1)} disabled={isSpinning || balance === 0}>∞</button>
+              </>
+            ) : (
+              <>
+                <span className="auto-counter">
+                  🔄 {autoSpins === -1 ? '∞' : autoSpins} spin{autoSpins !== 1 ? 's' : ''} left
+                </span>
+                <button className="btn-auto-stop" onClick={stopAuto}>⏹ STOP</button>
+              </>
+            )}
+          </div>
+
+          <button className="btn-secondary" onClick={handleReset} disabled={isSpinning || isAuto} style={{ width: '100%', marginTop: '1rem' }}>
             Reset Bet
           </button>
 
@@ -250,7 +309,9 @@ function Roulette({ balance, setBalance }) {
           {balance === 0 && (
             <div className="game-over-message card">
               <p>😢 You ran out of credits!</p>
-              <p style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>Reload the page to reset your balance.</p>
+              <button className="btn-reload-demo" onClick={() => setBalance(p => p + 1000)}>
+                + Reload Demo ($1,000)
+              </button>
             </div>
           )}
         </div>

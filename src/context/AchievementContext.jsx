@@ -6,7 +6,7 @@ const ACHIEVEMENTS = [
   { id: "first-pull",      title: "First Pull",        desc: "Play the slot machine for the first time",       rarity: "bronze", icon: "🎰" },
   { id: "first-hand",      title: "First Hand",        desc: "Play a hand of blackjack",                       rarity: "bronze", icon: "🃏" },
   { id: "first-win",       title: "Beginner's Luck",   desc: "Win your first bet in any game",                 rarity: "bronze", icon: "🍀" },
-  { id: "tried-all",       title: "Explorer",          desc: "Play all 5 games at least once",                 rarity: "bronze", icon: "🧭" },
+  { id: "tried-all",       title: "Explorer",          desc: "Play all 6 games at least once",                 rarity: "bronze", icon: "🧭" },
   { id: "bet-10",          title: "Small Roller",      desc: "Place 10 bets total across all games",           rarity: "bronze", icon: "🎲" },
   { id: "green-bet",       title: "Feeling Lucky",     desc: "Bet on green in roulette",                       rarity: "bronze", icon: "🟢" },
 
@@ -42,6 +42,32 @@ const ACHIEVEMENTS = [
   { id: "mines-10-gems",   title: "Gem Collector",      desc: "Reveal 10 gems in a single mines round",        rarity: "silver", icon: "💎" },
   { id: "mines-sweep",     title: "Mine Sweeper",       desc: "Reveal ALL safe tiles without hitting a mine",  rarity: "gold",   icon: "🧹" },
 
+  // ── New achievements ──
+  // Bronze
+  { id: "crash-chicken",   title: "Chicken",           desc: "Cash out below 1.5× in crash",                   rarity: "bronze", icon: "🐔" },
+  { id: "penny-bet",       title: "Penny Pincher",     desc: "Win a bet of $10 or less",                       rarity: "bronze", icon: "🪙" },
+
+  // Silver
+  { id: "lose-streak-5",   title: "Unlucky",           desc: "Lose 5 bets in a row",                           rarity: "silver", icon: "😭" },
+  { id: "big-bet",         title: "High Stakes",       desc: "Place a bet of $500 or more",                    rarity: "silver", icon: "💸" },
+  { id: "slots-50",        title: "Slot Addict",       desc: "Play 50 slot spins",                             rarity: "silver", icon: "🎰" },
+  { id: "bj-5-card",       title: "Five Card Charlie", desc: "Win blackjack with 5 or more cards",             rarity: "silver", icon: "🖐️" },
+  { id: "mines-first-boom",title: "Instant Regret",    desc: "Hit a mine on the very first click",             rarity: "silver", icon: "💥" },
+
+  // Gold
+  { id: "win-streak-10",   title: "Legendary Run",     desc: "Win 10 bets in a row",                           rarity: "gold",   icon: "🌟" },
+  { id: "crash-50x",       title: "Astronaut",         desc: "Cash out at 50× or higher in crash",             rarity: "gold",   icon: "🧑‍🚀" },
+  { id: "roulette-10-wins",title: "Spin Doctor",       desc: "Win 10 roulette spins",                          rarity: "gold",   icon: "🎡" },
+  { id: "big-win",         title: "Mega Win",          desc: "Win $1,000 or more in a single bet",             rarity: "gold",   icon: "🤯" },
+
+  // Legendary
+  { id: "bet-500",         title: "No Life",           desc: "Place 500 bets total across all games",          rarity: "legendary", icon: "☠️" },
+  { id: "balance-25k",     title: "Wolf of Wall Street",desc: "Reach $25,000 balance",                         rarity: "legendary", icon: "🐺" },
+
+  // Plinko-specific
+  { id: "first-plinko",    title: "Ball Dropper",      desc: "Play plinko for the first time",                 rarity: "bronze", icon: "📍" },
+  { id: "plinko-100x",     title: "Jackpot Lane",      desc: "Land a 100× or higher multiplier in plinko",     rarity: "gold",   icon: "🎯" },
+
 ];
 
 const ACH_STORAGE_KEY = "luckyspin_achievements";
@@ -59,14 +85,14 @@ export function AchievementProvider({ children }) {
   const [stats, setStats] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem(STATS_STORAGE_KEY)) || {
-        totalBets: 0, winStreak: 0, maxWinStreak: 0,
-        rouletteWins: 0, slotsPlayed: 0, roulettePlayed: 0, bjPlayed: 0, crashPlayed: 0, minesPlayed: 0,
+        totalBets: 0, winStreak: 0, maxWinStreak: 0, lossStreak: 0, maxLossStreak: 0,
+        rouletteWins: 0, slotsPlayed: 0, roulettePlayed: 0, bjPlayed: 0, crashPlayed: 0, minesPlayed: 0, plinkoPlayed: 0,
         hitZero: false, greenBet: false,
       };
     } catch {
       return {
-        totalBets: 0, winStreak: 0, maxWinStreak: 0,
-        rouletteWins: 0, slotsPlayed: 0, roulettePlayed: 0, bjPlayed: 0, crashPlayed: 0, minesPlayed: 0,
+        totalBets: 0, winStreak: 0, maxWinStreak: 0, lossStreak: 0, maxLossStreak: 0,
+        rouletteWins: 0, slotsPlayed: 0, roulettePlayed: 0, bjPlayed: 0, crashPlayed: 0, minesPlayed: 0, plinkoPlayed: 0,
         hitZero: false, greenBet: false,
       };
     }
@@ -117,10 +143,16 @@ export function AchievementProvider({ children }) {
     if (stats.totalBets >= 10) unlock('bet-10');
     if (stats.totalBets >= 50) unlock('bet-50');
     if (stats.totalBets >= 200) unlock('bet-200');
+    if (stats.totalBets >= 500) unlock('bet-500');
     if (stats.maxWinStreak >= 3) unlock('win-streak-3');
     if (stats.maxWinStreak >= 7) unlock('win-streak-7');
+    if (stats.maxWinStreak >= 10) unlock('win-streak-10');
+    if ((stats.maxLossStreak || 0) >= 5) unlock('lose-streak-5');
     if (stats.rouletteWins >= 5) unlock('roulette-5-wins');
-    if (stats.roulettePlayed > 0 && stats.slotsPlayed > 0 && stats.bjPlayed > 0 && (stats.crashPlayed || 0) > 0 && (stats.minesPlayed || 0) > 0) unlock('tried-all');
+    if (stats.rouletteWins >= 10) unlock('roulette-10-wins');
+    if ((stats.slotsPlayed || 0) >= 50) unlock('slots-50');
+    if (stats.roulettePlayed > 0 && stats.slotsPlayed > 0 && stats.bjPlayed > 0 && (stats.crashPlayed || 0) > 0 && (stats.minesPlayed || 0) > 0 && (stats.plinkoPlayed || 0) > 0) unlock('tried-all');
+    if ((stats.plinkoPlayed || 0) > 0) unlock('first-plinko');
   }, [stats, unlock]);
 
   return (

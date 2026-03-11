@@ -6,10 +6,14 @@ export function checkWinAchievements({ betAmount, balance, newBalance, unlock, s
   unlock('first-win');
   if (betAmount >= balance) unlock('all-in-win');
   if (balance < 100) unlock('comeback');
+  if (betAmount <= 10) unlock('penny-bet');
+  const winnings = newBalance - balance + betAmount;
+  if (winnings >= 1000) unlock('big-win');
   if (newBalance >= 2000) {
     unlock('double-up');
     if (stats.hitZero) unlock('survived-zero');
   }
   if (newBalance >= 5000) unlock('balance-5k');
   if (newBalance >= 10000) unlock('balance-10k');
+  if (newBalance >= 25000) unlock('balance-25k');
 }

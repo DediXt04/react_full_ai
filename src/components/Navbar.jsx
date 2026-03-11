@@ -10,6 +10,7 @@ const gameItems = [
   { to: "/blackjack", label: "Blackjack", icon: "🃏" },
   { to: "/crash",     label: "Crash",     icon: "📈" },
   { to: "/mines",     label: "Mines",     icon: "💣" },
+  { to: "/plinko",   label: "Plinko",    icon: "📍" },
 ];
 
 function Navbar({ balance, onResetBalance }) {
@@ -20,7 +21,7 @@ function Navbar({ balance, onResetBalance }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking/touching outside
   useEffect(() => {
     const handleClick = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -28,7 +29,11 @@ function Navbar({ balance, onResetBalance }) {
       }
     };
     document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener("touchstart", handleClick);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("touchstart", handleClick);
+    };
   }, []);
 
   // Close dropdown on route change

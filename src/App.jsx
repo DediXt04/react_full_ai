@@ -12,7 +12,9 @@ import Slots from "./pages/Slots";
 import Blackjack from "./pages/Blackjack";
 import Crash from "./pages/Crash";
 import Mines from "./pages/Mines";
+import Plinko from "./pages/Plinko";
 import Achievements from "./pages/Achievements";
+import NotFound from "./pages/NotFound";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -49,7 +51,9 @@ function App() {
           <Route path="/blackjack" element={<Blackjack balance={balance} setBalance={setBalance} />} />
           <Route path="/crash" element={<Crash balance={balance} setBalance={setBalance} />} />
           <Route path="/mines" element={<Mines balance={balance} setBalance={setBalance} />} />
+          <Route path="/plinko" element={<Plinko balance={balance} setBalance={setBalance} />} />
           <Route path="/achievements" element={<Achievements />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 

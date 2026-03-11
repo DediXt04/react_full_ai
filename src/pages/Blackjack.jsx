@@ -154,7 +154,7 @@ export default function Blackjack({ balance, setBalance }) {
   }, [stage, playerHand, deck, dealerHand, lockedBet, balance, setBalance]);
 
   // ── Dealer plays ──
-  const runDealer = useCallback((deckIn, dHand, pHand, bet) => {
+  const runDealer = (deckIn, dHand, pHand, bet) => {
     const currentBet = bet ?? lockedBet;
     let dH = [...dHand];
     let dk = [...deckIn];
@@ -179,10 +179,10 @@ export default function Blackjack({ balance, setBalance }) {
       }
     };
     setTimeout(dealerDraw, 400);
-  }, [lockedBet]);
+  };
 
   // ── End game ──
-  const endGame = useCallback((outcome, bet, dH, pH, dk) => {
+  const endGame = (outcome, bet, dH, pH, dk) => {
     setStage("result");
     setResult(outcome);
     setShowDealer(true);
@@ -224,21 +224,26 @@ export default function Blackjack({ balance, setBalance }) {
     const newBalance = balanceAtDeal.current - bet + (payout || 0);
     updateStats(prev => {
       const newStreak = isWin ? prev.winStreak + 1 : 0;
+      const newLossStreak = isWin ? 0 : (prev.lossStreak || 0) + 1;
       return {
         totalBets: prev.totalBets + 1,
         bjPlayed: prev.bjPlayed + 1,
         winStreak: newStreak,
         maxWinStreak: Math.max(prev.maxWinStreak, newStreak),
+        lossStreak: newLossStreak,
+        maxLossStreak: Math.max(prev.maxLossStreak || 0, newLossStreak),
         hitZero: prev.hitZero || newBalance <= 0,
       };
     });
+    if (bet >= 500) unlock('big-bet');
     if (isWin) {
       if (handTotal(pH) === 21) unlock('bj-21');
       if (outcome === "blackjack") unlock('bj-blackjack');
       if (doubled) unlock('bj-double-win');
+      if (pH.length >= 5) unlock('bj-5-card');
       checkWinAchievements({ betAmount: bet, balance: balanceAtDeal.current, newBalance, unlock, stats: achStats });
     }
-  }, [setBalance, unlock, updateStats, doubled]);
+  };
 
   // ── Derived ──
   const playerTotal = handTotal(playerHand);
@@ -396,6 +401,14 @@ export default function Blackjack({ balance, setBalance }) {
                 <button className="bj-btn-deal" onClick={handleDeal} disabled={balance < 1}>
                   {stage === "idle" ? "🃏 Deal Cards" : "🔄 New Hand"}
                 </button>
+                {balance === 0 && (
+                  <div className="game-over-message" style={{ marginTop: '0.75rem' }}>
+                    <p>😢 You ran out of credits!</p>
+                    <button className="btn-reload-demo" onClick={() => setBalance(p => p + 1000)}>
+                      + Reload Demo ($1,000)
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="bj-action-row">

@@ -8,7 +8,7 @@ import "./Crash.css";
 function generateCrashPoint() {
   const r = Math.random();
   // House edge ~4%. Minimum 1.00x.
-  const crash = Math.max(1, Math.floor((0.96 / (1 - r)) * 100) / 100);
+  const crash = Math.max(1, Math.floor((1 / (1 - r)) * 100) / 100);
   return Math.min(crash, 1000); // cap at 1000x
 }
 
@@ -36,9 +36,11 @@ export default function Crash({ balance, setBalance }) {
   const pointsRef = useRef([]);
   const autoCashOutRef = useRef(null);
   const cashOutRef = useRef(null);
+  const cashedAtRef = useRef(null);
+  const multiplierRef = useRef(1.0);
 
   // Draw the graph
-  const drawGraph = useCallback((currentMult, crashed) => {
+  const drawGraph = useCallback((currentMult, crashed, cashedMult) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -60,7 +62,6 @@ export default function Crash({ balance, setBalance }) {
     const points = pointsRef.current;
     if (points.length < 2) return;
 
-    // Scale: x = time (0 to maxT), y = multiplier (1 to maxMult)
     const maxT = points[points.length - 1].t;
     const maxMult = Math.max(currentMult, 2);
     const pad = 30;
@@ -68,13 +69,13 @@ export default function Crash({ balance, setBalance }) {
     const toX = (t) => pad + (t / maxT) * (W - pad * 2);
     const toY = (m) => H - pad - ((m - 1) / (maxMult - 1)) * (H - pad * 2);
 
-    // Draw curve
+    // Draw curve — green before cashout, gold after, red on crash
+    const color = crashed ? "#ef4444" : cashedMult ? "#fbbf24" : "#10b981";
     ctx.beginPath();
     ctx.moveTo(toX(points[0].t), toY(points[0].m));
     for (let i = 1; i < points.length; i++) {
       ctx.lineTo(toX(points[i].t), toY(points[i].m));
     }
-    const color = crashed ? "#ef4444" : "#10b981";
     ctx.strokeStyle = color;
     ctx.lineWidth = 3;
     ctx.shadowColor = color;
@@ -82,15 +83,33 @@ export default function Crash({ balance, setBalance }) {
     ctx.stroke();
     ctx.shadowBlur = 0;
 
-    // Glow fill under curve
+    // Glow fill
     ctx.lineTo(toX(points[points.length - 1].t), H - pad);
     ctx.lineTo(toX(0), H - pad);
     ctx.closePath();
     const grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, crashed ? "rgba(239,68,68,0.15)" : "rgba(16,185,129,0.15)");
+    grad.addColorStop(0, crashed ? "rgba(239,68,68,0.15)" : cashedMult ? "rgba(251,191,36,0.12)" : "rgba(16,185,129,0.15)");
     grad.addColorStop(1, "transparent");
     ctx.fillStyle = grad;
     ctx.fill();
+
+    // Cashout horizontal line
+    if (cashedMult && maxMult > 1) {
+      const y = toY(cashedMult);
+      ctx.setLineDash([8, 6]);
+      ctx.strokeStyle = "#10b981";
+      ctx.lineWidth = 2;
+      ctx.shadowColor = "#10b981";
+      ctx.shadowBlur = 6;
+      ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.shadowBlur = 0;
+
+      // Label
+      ctx.fillStyle = "#10b981";
+      ctx.font = "bold 22px Orbitron, monospace";
+      ctx.fillText(`💰 ${cashedMult.toFixed(2)}×`, pad + 8, y - 10);
+    }
 
     // Dot at current position
     const lastP = points[points.length - 1];
@@ -111,7 +130,9 @@ export default function Crash({ balance, setBalance }) {
     setBalance((b) => b - betAmount);
     setCrashPoint(cp);
     setCashedAt(null);
+    cashedAtRef.current = null;
     setMultiplier(1.0);
+    multiplierRef.current = 1.0;
     setPhase("running");
     setStatusMsg("");
     pointsRef.current = [{ t: 0, m: 1.0 }];
@@ -126,18 +147,23 @@ export default function Crash({ balance, setBalance }) {
 
   // Cash out
   const cashOut = useCallback(() => {
-    if (phase !== "running") return;
-    const winnings = Math.floor(betAmount * multiplier * 100) / 100;
+    if (phase !== "running" || cashedAt !== null) return;
+    // Use ref for the live multiplier (state may be 1 frame behind in rAF)
+    const mult = multiplierRef.current;
+    const winnings = Math.floor(betAmount * mult * 100) / 100;
     setBalance((b) => b + winnings);
-    setCashedAt(multiplier);
-    setPhase("cashed");
-    setStatusMsg(`Cashed out at ${multiplier.toFixed(2)}× — Won $${winnings.toFixed(2)}!`);
+    setCashedAt(mult);
+    cashedAtRef.current = mult;
+    setStatusMsg(`Cashed out at ${mult.toFixed(2)}× — Won $${winnings.toFixed(2)}!`);
 
     // Achievements
     const newBalance = balance - betAmount + winnings;
-    if (multiplier >= 5) unlock("crash-5x");
-    if (multiplier >= 10) unlock("crash-10x");
-    if (crashPoint && Math.abs(multiplier - crashPoint) <= 0.1) unlock("crash-close-call");
+    if (mult >= 5) unlock("crash-5x");
+    if (mult >= 10) unlock("crash-10x");
+    if (mult >= 50) unlock("crash-50x");
+    if (mult < 1.5) unlock("crash-chicken");
+    if (crashPoint && Math.abs(mult - crashPoint) <= 0.1) unlock("crash-close-call");
+    if (betAmount >= 500) unlock("big-bet");
     checkWinAchievements({ betAmount, balance, newBalance, unlock, stats: achStats });
 
     updateStats((prev) => {
@@ -145,9 +171,11 @@ export default function Crash({ balance, setBalance }) {
       return {
         winStreak: newStreak,
         maxWinStreak: Math.max(prev.maxWinStreak, newStreak),
+        lossStreak: 0,
       };
     });
-  }, [phase, betAmount, multiplier, balance, crashPoint, achStats, setBalance, unlock, updateStats]);
+    // Phase stays "running" so animation continues
+  }, [phase, cashedAt, betAmount, balance, crashPoint, achStats, setBalance, unlock, updateStats]);
 
   useEffect(() => { cashOutRef.current = cashOut; }, [cashOut]);
 
@@ -164,41 +192,48 @@ export default function Crash({ balance, setBalance }) {
 
     const tick = () => {
       const elapsed = (performance.now() - startTimeRef.current) / 1000;
-      // Multiplier grows exponentially: e^(0.07*t) gives ~2x at 10s, ~4x at 20s
       const currentMult = Math.floor(Math.exp(0.07 * elapsed) * 100) / 100;
+      const alreadyCashed = cashedAtRef.current !== null;
 
       if (currentMult >= crashPoint) {
-        // Crashed!
+        multiplierRef.current = crashPoint;
         setMultiplier(crashPoint);
         pointsRef.current.push({ t: elapsed, m: crashPoint });
-        drawGraph(crashPoint, true);
-        setPhase("crashed");
-        setStatusMsg(`Crashed at ${crashPoint.toFixed(2)}× — You lost $${betAmount.toFixed(2)}`);
-
+        drawGraph(crashPoint, true, cashedAtRef.current);
         setHistory((prev) => [crashPoint, ...prev.slice(0, 14)]);
 
-        updateStats((prev) => ({
-          winStreak: 0,
-          hitZero: prev.hitZero || (balance - betAmount) <= 0,
-        }));
+        if (alreadyCashed) {
+          setPhase("cashed");
+          setStatusMsg(`Cashed at ${cashedAtRef.current.toFixed(2)}× ✅ — Crashed at ${crashPoint.toFixed(2)}×`);
+        } else {
+          setPhase("crashed");
+          setStatusMsg(`Crashed at ${crashPoint.toFixed(2)}× — You lost $${betAmount.toFixed(2)}`);
+          updateStats((prev) => ({
+            winStreak: 0,
+            lossStreak: (prev.lossStreak || 0) + 1,
+            maxLossStreak: Math.max(prev.maxLossStreak || 0, (prev.lossStreak || 0) + 1),
+            hitZero: prev.hitZero || (balance - betAmount) <= 0,
+          }));
+        }
         return;
       }
 
+      multiplierRef.current = currentMult;
       setMultiplier(currentMult);
 
-      // Auto cash-out check
-      const target = autoCashOutRef.current;
-      if (target && currentMult >= target) {
-        cashOutRef.current?.();
-        return;
+      // Auto cash-out check (only if not cashed yet)
+      if (!alreadyCashed) {
+        const target = autoCashOutRef.current;
+        if (target && currentMult >= target) {
+          cashOutRef.current?.();
+        }
       }
 
       pointsRef.current.push({ t: elapsed, m: currentMult });
-      // Keep points array manageable
       if (pointsRef.current.length > 500) {
         pointsRef.current = pointsRef.current.filter((_, i) => i % 2 === 0);
       }
-      drawGraph(currentMult, false);
+      drawGraph(currentMult, false, cashedAtRef.current);
       animFrameRef.current = requestAnimationFrame(tick);
     };
 
@@ -214,7 +249,25 @@ export default function Crash({ balance, setBalance }) {
   return (
     <div className="crash-page fade-in">
       <div className="crash-container">
-        {/* LEFT — Betting */}
+        {/* LEFT — Graph */}
+        <div className="crash-graph-section">
+          <h2>MULTIPLIER GRAPH</h2>
+          <div className="crash-canvas-wrap">
+            <canvas ref={canvasRef} />
+            <div
+              className={`crash-multiplier-overlay ${
+                phase === "crashed" ? "crashed" : phase === "cashed" ? "cashed" : cashedAt !== null ? "watching" : ""
+              }`}
+            >
+              {multiplier.toFixed(2)}×
+            </div>
+          </div>
+          <div className={`crash-status ${phase === "cashed" ? "win" : phase === "crashed" ? "lose" : ""}`}>
+            {statusMsg}
+          </div>
+        </div>
+
+        {/* RIGHT — Betting */}
         <div className="crash-betting">
           <h2>📈 CRASH</h2>
 
@@ -285,13 +338,17 @@ export default function Crash({ balance, setBalance }) {
           </div>
 
           <div className="crash-actions">
-            {!isRunning ? (
+            {phase === "idle" || phase === "crashed" || phase === "cashed" ? (
               <button
                 className="btn-crash-start"
                 onClick={startRound}
-                disabled={!betValid || isRunning}
+                disabled={!betValid || phase === "running"}
               >
                 🚀 START
+              </button>
+            ) : cashedAt !== null ? (
+              <button className="btn-cashed" disabled>
+                ✅ CASHED @ {cashedAt.toFixed(2)}×
               </button>
             ) : (
               <button className="btn-cashout" onClick={cashOut}>
@@ -299,24 +356,15 @@ export default function Crash({ balance, setBalance }) {
               </button>
             )}
           </div>
-        </div>
 
-        {/* RIGHT — Graph */}
-        <div className="crash-graph-section">
-          <h2>MULTIPLIER GRAPH</h2>
-          <div className="crash-canvas-wrap">
-            <canvas ref={canvasRef} />
-            <div
-              className={`crash-multiplier-overlay ${
-                phase === "crashed" ? "crashed" : phase === "cashed" ? "cashed" : ""
-              }`}
-            >
-              {multiplier.toFixed(2)}×
+          {balance === 0 && phase !== "running" && (
+            <div className="game-over-message" style={{ marginTop: '0.75rem' }}>
+              <p>😢 You ran out of credits!</p>
+              <button className="btn-reload-demo" onClick={() => setBalance(p => p + 1000)}>
+                + Reload Demo ($1,000)
+              </button>
             </div>
-          </div>
-          <div className={`crash-status ${phase === "cashed" ? "win" : phase === "crashed" ? "lose" : ""}`}>
-            {statusMsg}
-          </div>
+          )}
         </div>
       </div>
 

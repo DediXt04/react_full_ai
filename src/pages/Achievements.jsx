@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useAchievements } from "../context/AchievementContext";
 import "./Achievements.css";
 
-const RARITY_ORDER = { gold: 0, silver: 1, bronze: 2 };
+const RARITY_ORDER = { legendary: 0, gold: 1, silver: 2, bronze: 3 };
 const FILTERS = [
   { key: "all",      label: "All" },
+  { key: "legendary", label: "💜 Legendary" },
   { key: "gold",     label: "🥇 Gold" },
   { key: "silver",   label: "🥈 Silver" },
   { key: "bronze",   label: "🥉 Bronze" },
@@ -50,7 +51,7 @@ export default function Achievements() {
         </div>
 
         <div className="ach-rarity-counts">
-          {[["bronze", "🥉"], ["silver", "🥈"], ["gold", "🥇"]].map(([r, icon]) => (
+          {[["legendary", "💜"], ["bronze", "🥉"], ["silver", "🥈"], ["gold", "🥇"]].map(([r, icon]) => (
             <div key={r} className={`ach-rc-badge ${r}`}>
               <span className="ach-rc-icon">{icon}</span>
               <span className="ach-rc-num">{unlockedOf(r)}/{byRarity(r).length}</span>

@@ -101,6 +101,11 @@
   border: 1px solid rgba(255,215,0,0.25);
   color: #ffd700;
 }
+.ach-rc-badge.legendary {
+  background: rgba(168,85,247,0.1);
+  border: 1px solid rgba(168,85,247,0.25);
+  color: #a855f7;
+}
 .ach-rc-icon { font-size: 1rem; }
 .ach-rc-num { letter-spacing: 1px; }
 
@@ -178,10 +183,21 @@
   animation: ach-card-in 0.4s ease both, gold-glow 3s ease-in-out infinite;
   animation-delay: calc(var(--i, 0) * 40ms), 0s;
 }
+.ach-card.legendary.unlocked {
+  background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(6,10,30,0.8));
+  border-color: rgba(168,85,247,0.3);
+  box-shadow: 0 0 24px rgba(168,85,247,0.1);
+  animation: ach-card-in 0.4s ease both, legendary-glow 3s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 40ms), 0s;
+}
 
 @keyframes gold-glow {
   0%, 100% { box-shadow: 0 0 24px rgba(255,215,0,0.06); }
   50%      { box-shadow: 0 0 32px rgba(255,215,0,0.14); }
+}
+@keyframes legendary-glow {
+  0%, 100% { box-shadow: 0 0 24px rgba(168,85,247,0.1); }
+  50%      { box-shadow: 0 0 36px rgba(168,85,247,0.25); }
 }
 
 /* Locked cards */
@@ -205,6 +221,7 @@
 .ach-card.bronze.unlocked:hover { box-shadow: 0 8px 30px rgba(205,127,50,0.12); }
 .ach-card.silver.unlocked:hover { box-shadow: 0 8px 30px rgba(192,192,192,0.12); }
 .ach-card.gold.unlocked:hover   { box-shadow: 0 8px 30px rgba(255,215,0,0.18); }
+.ach-card.legendary.unlocked:hover { box-shadow: 0 8px 30px rgba(168,85,247,0.25); }
 
 /* Icon */
 .ach-card-icon {
@@ -253,6 +270,7 @@
 .ach-rarity-bronze { color: #cd7f32; background: rgba(205,127,50,0.12); border: 1px solid rgba(205,127,50,0.3); }
 .ach-rarity-silver { color: #c0c0c0; background: rgba(192,192,192,0.12); border: 1px solid rgba(192,192,192,0.3); }
 .ach-rarity-gold   { color: #ffd700; background: rgba(255,215,0,0.12);   border: 1px solid rgba(255,215,0,0.3); }
+.ach-rarity-legendary { color: #a855f7; background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.3); }
 
 /* Empty state */
 .ach-empty {
@@ -263,9 +281,27 @@
 }
 
 /* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .ach-rarity-counts { flex-wrap: wrap; }
+  .ach-progress-section { flex-wrap: wrap; }
+  .ach-progress-text { white-space: normal; }
+}
+
 @media (max-width: 600px) {
   .ach-grid { grid-template-columns: 1fr; }
   .ach-card { padding: 1rem; }
   .ach-filters { gap: 0.35rem; }
   .ach-filter-btn { padding: 0.3rem 0.6rem; font-size: 0.8rem; }
+  .ach-rarity-counts { flex-wrap: wrap; gap: 0.5rem; }
+}
+
+@media (max-width: 400px) {
+  .ach-page { padding: 1rem; }
+  .ach-header h2 { font-size: 1rem; letter-spacing: 1.5px; }
+  .ach-card-icon { width: 36px; height: 36px; font-size: 1.5rem; }
+  .ach-card-title { font-size: 0.72rem; }
+  .ach-card-desc { font-size: 0.78rem; }
+  .ach-card { gap: 0.75rem; padding: 0.85rem; }
+  .ach-rc-badge { padding: 0.25rem 0.5rem; font-size: 0.6rem; }
+  .ach-progress-text { font-size: 0.7rem; white-space: normal; }
 }

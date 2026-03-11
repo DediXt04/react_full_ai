@@ -1,6 +1,6 @@
 # 🎰 LuckySpinDEMO
 
-> *"Sim, até esse README foi escrito por IA. Inclusive essa frase. E a atualização dele também. É IAs até o fundo."*
+> *"Sim, até esse README foi escrito por IA. Inclusive essa frase. E a atualização dele também. E a atualização da atualização. É IAs o caminho inteiro pra baixo."*
 
 ---
 
@@ -16,19 +16,21 @@ Sabe aquela sensação de jogar fora seu patrimônio em um cassino de verdade? A
 
 | Jogo | Descrição honesta |
 |------|------------------|
-| 🎡 Roleta | Você escolhe vermelho ou preto. A bola decide que não é nenhum dos dois. |
-| 🎰 Slots | Nove emojis competem pela sua atenção. As chances de ganhar diminuíram — chamamos isso de "balanceamento". |
-| 🃏 Blackjack | Você pede mais uma carta quando não devia. Sempre. Agora com double down que *realmente* funciona. |
-| 📈 Crash | Um número sobe e você precisa clicar antes que caia. Basicamente seu portfólio de cripto em formato de jogo. |
-| 💣 Mines | Clique em quadrados e torça pra não explodir. Metáfora perfeita pra abrir emails na segunda-feira. |
+| 🎡 Roleta | Você escolhe vermelho ou preto. A bola decide que não é nenhum dos dois. Agora com auto-spin pra automatizar a decepção. |
+| 🎰 Slots | Nove emojis competem pela sua atenção. As chances de ganhar diminuíram — chamamos isso de "balanceamento". Auto-spin incluso pra quem quer perder no piloto automático. |
+| 🃏 Blackjack | Você pede mais uma carta quando não devia. Sempre. O dealer agora *realmente* pede cartas, porque antes ele esquecia. |
+| 📈 Crash | Um número sobe e você precisa clicar antes que caia. Basicamente seu portfólio de cripto em formato de jogo. O gráfico agora continua subindo depois do cashout pra maximizar seu arrependimento. |
+| 💣 Mines | Clique em quadrados e torça pra não explodir. Tiles brilhantes que parecem esmeraldas — pra você se sentir rico 0.3 segundos antes de pisar numa mina. |
+| 📍 Plinko | Solte uma bolinha e reze. Ela quica por pinos, desvia pra onde quer, e cai num multiplicador que provavelmente é 0.2×. Física simulada pra te dar a ilusão de controle. |
 
 ---
 
 ## Stack técnica
 
 - **React 19** — porque fazer isso em vanilla JS seria sofrimento demais até pra uma IA
-- **Vite** — build em 1.2s. Mais rápido que você perder seus créditos. Brincadeira. Quase.
-- **CSS puro** — sem Tailwind, sem styled-components, sem autoestima
+- **Vite** — build em 1.3s. Mais rápido que você perder seus créditos
+- **CSS puro** — sem Tailwind, sem styled-components, sem autoestima. Rajdhani + Orbitron pra parecer premium
+- **Canvas API** — gráficos do Crash e física do Plinko. requestAnimationFrame é o novo jQuery
 - **Math.random()** — o motor probabilístico de última geração que decide seu destino
 - **localStorage** — seu saldo persiste entre sessões, assim como suas péssimas decisões
 - **Claude (Anthropic)** — escreveu 100% do código, 100% do CSS, 100% desse README, e provavelmente está te julgando agora
@@ -57,16 +59,18 @@ src/
 │   ├── Blackjack.jsx     # 21 ou bust (geralmente bust)
 │   ├── Crash.jsx         # Gráfico subindo até seu ego cair
 │   ├── Mines.jsx         # Campo minado com consequências emocionais
-│   └── Achievements.jsx  # 31 conquistas pra te dar ilusão de progresso
+│   ├── Plinko.jsx        # Galton board com bolinha dourada e multiplicadores que te dão esperança falsa
+│   ├── Achievements.jsx  # 46 conquistas pra te dar ilusão de progresso
+│   └── NotFound.jsx      # 404 com tema de cassino, porque até se perder aqui é on-brand
 ├── components/
-│   ├── Navbar.jsx        # Dropdown de jogos que finalmente funciona
+│   ├── Navbar.jsx        # Dropdown de jogos que finalmente funciona (6 jogos e contando)
 │   ├── Footer.jsx        # Parte do site que ninguém scrolla até ver
 │   ├── AchievementToast.jsx  # Pop-up que te parabeniza por perder
 │   └── ParticleBackground.jsx # Bolinhas flutuantes pra disfarçar o vazio
 ├── context/
-│   └── AchievementContext.jsx # 31 achievements e um useEffect centralizado
+│   └── AchievementContext.jsx # 46 achievements, 4 raridades, e um useEffect que virou Frankenstein
 ├── utils/
-│   └── achievementHelpers.js  # Lógica de conquistas que estava duplicada em 5 arquivos
+│   └── achievementHelpers.js  # Lógica de conquistas centralizada (estava duplicada em 5 arquivos, agora em 6)
 ├── hooks/
 │   └── useAnimatedNumber.js   # Faz o saldo animar enquanto evapora
 └── App.jsx               # Cola que une a decepção
@@ -76,28 +80,43 @@ src/
 
 ## Features
 
-- ✅ **$1.000 de créditos demo** — recarregáveis infinitamente, assim como sua esperança
-- ✅ **5 jogos** — porque 1 forma de perder não era suficiente
-- ✅ **31 achievements** — bronze, prata e ouro pra te recompensar pelo sofrimento
-- ✅ **Navbar com dropdown** — Home, Games ▾, Achievements. Limpa, elegante, funcional (na terceira tentativa)
+- ✅ **$1.000 de créditos demo** — recarregáveis infinitamente em qualquer jogo, assim como sua esperança
+- ✅ **6 jogos** — porque 5 formas de perder não era suficiente
+- ✅ **46 achievements** — bronze, prata, ouro e **lendário** pra te recompensar pelo sofrimento em escala progressiva
+- ✅ **Auto-spin/auto-drop** — Roleta, Slots e Plinko. Pra quando você quer perder mas está ocupado
+- ✅ **Navbar com dropdown** — 6 jogos organizados. Limpa, elegante, funcional (na terceira tentativa)
 - ✅ **Sem dinheiro real** — o único cassino honesto do mundo
-- ✅ **Totalmente responsivo** — perde dinheiro imaginário no celular também
-- ✅ **Design neon dark** — glassmorphism, partículas flutuantes, e uma quantidade suspeita de `box-shadow`
-- ✅ **Auto-spin nos Slots** — para otimizar sua velocidade de perder
-- ✅ **Persistência localStorage** — seu saldo e achievements sobrevivem a F5. Suas escolhas, nem tanto.
-- ✅ **Slots nerfado** — tinha EV de +28% pro jogador. Agora tem 9 símbolos e house edge de 5.7%. Culpe o balanceamento.
+- ✅ **Totalmente responsivo** — perde dinheiro imaginário no celular, tablet, e geladeira smart
+- ✅ **Design neon dark** — glassmorphism, partículas flutuantes, Orbitron font, e uma quantidade suspeita de `box-shadow`
+- ✅ **Página 404** — se você errar a URL, pelo menos vai errar com estilo
+- ✅ **Persistência localStorage** — seu saldo, achievements e stats sobrevivem a F5. Suas escolhas, nem tanto.
+- ✅ **Odds ≈ 50/50** — Crash, Mines e Slots foram balanceados. A casa ganha por pouco. Capitalismo simulado com precisão.
 
 ---
 
 ## Sistema de Achievements
 
-31 conquistas organizadas por raridade, porque gamificação sobre gamificação é exatamente o que o mundo precisava.
+46 conquistas organizadas por raridade, porque gamificação sobre gamificação é exatamente o que o mundo precisava.
 
-| Raridade | Exemplos | Descrição real |
-|----------|----------|----------------|
-| 🥉 Bronze | First Spin, First Pull | "Parabéns, você clicou num botão" |
-| 🥈 Prata | On Fire (3 wins seguidas), Bold Move (double down win) | "Parabéns, o Math.random() te favoreceu" |
-| 🥇 Ouro | Unstoppable (7 wins seguidas), Slot Lord (💎💎💎) | "Parabéns, você deveria ter parado enquanto estava ganhando" |
+| Raridade | Qtd | Exemplos | Descrição real |
+|----------|-----|----------|----------------|
+| 🥉 Bronze | 11 | First Spin, Ball Dropper, Chicken | "Parabéns, você clicou num botão" |
+| 🥈 Prata | 14 | On Fire (3 wins), Instant Regret (mina no 1º click), Unlucky (5 losses) | "Parabéns, o Math.random() te favoreceu. Ou não." |
+| 🥇 Ouro | 17 | Unstoppable (7 wins), Jackpot Lane (100× no Plinko), Astronaut (50× no Crash) | "Parabéns, você deveria ter parado enquanto estava ganhando" |
+| 💜 Lendário | 4 | No Life (500 bets), Wolf of Wall Street ($25k) | "Parabéns, você precisa sair de casa" |
+
+---
+
+## O Plinko
+
+O jogo mais recente. Uma bolinha dourada cai por uma grade de pinos, quicando aleatoriamente pra esquerda ou direita em cada nível (Galton board). No fundo, multiplicadores coloridos esperam — dos generosos 1000× nas bordas aos deprimentes 0.2× no centro.
+
+**Configurações:**
+- **Linhas:** 8, 12 ou 16 — mais linhas = mais caos = mais arrependimento
+- **Risco:** Low, Medium, High — pra quem quer controlar a *intensidade* da decepção
+- **EV ≈ $1.00** — matematicamente justo. Emocionalmente devastador.
+
+Canvas com requestAnimationFrame, ease-in pra gravidade, ease-out pra deflexão. Porque a física de uma bolinha de cassino falso merece mais engenharia que muita startup.
 
 ---
 
@@ -112,26 +131,29 @@ Estavam. EV de +28% pro jogador. Adicionamos 3 emojis novos (🍊🍇🍀) e ago
 **O dropdown da navbar funciona?**
 Agora sim. Depois de um `::before` pseudo-element invisível pra preencher 6 pixels de gap. Programação é isso: 3 horas pra resolver 6 pixels.
 
-**O Blackjack tinha bugs?**
-Tinha 2. O achievement "Bold Move" desbloqueava com qualquer win de 3 cartas (não só double down), e o cálculo de balance pros achievements usava closure stale. Mas você não ia notar. Provavelmente.
+**Por que o Crash tinha um bug de 0.01×?**
+Stale closure. O `cashOut` lia `multiplier` do state do React, mas o `setMultiplier` no requestAnimationFrame ainda não tinha re-renderizado. Solução: `multiplierRef` atualizado sincronamente no tick. Você provavelmente não entendeu nada disso, e tudo bem.
+
+**O Plinko é justo?**
+Cada pino tem 50% de chance de ir pra esquerda ou direita. Distribuição binomial. EV ≈ $1.00 pra toda configuração. A casa ganha ~1-2%. Então sim, é justo. Você que não tem sorte.
 
 **Posso usar isso para aprender sobre jogos de azar?**
 Sim, e a principal lição é: *a casa sempre vence*. Testamos. A IA confirmou. Matemática conferiu.
 
 **Você realmente deixou uma IA escrever tudo?**
-Sim. O dev abriu o Copilot, descreveu o projeto em português informal, e foi tomar café. Voltou com um cassino funcional de 5 jogos, 31 achievements, e um README sarcástico. Esse é o estado da engenharia de software em 2026.
+Sim. O dev abriu o Copilot, descreveu o projeto em português informal, e foi tomar café. Voltou com um cassino funcional de 6 jogos, 46 achievements, física de Plinko, e um README que sabe mais sobre o projeto que o próprio dev. Esse é o estado da engenharia de software em 2026.
 
 **O código é bom?**
-É código de IA. Funciona perfeitamente até o momento em que você tenta entender por quê. Mas pelo menos agora está *refatorado* — a lógica de achievements que estava copiada em 5 arquivos foi centralizada. Progresso.
+É código de IA. Funciona perfeitamente até o momento em que você tenta entender por quê. Mas pelo menos agora está *refatorado* — achievements centralizados, refs sincronizados, design padronizado. Uma bagunça *organizada*.
 
 ---
 
 ## Aviso legal
 
-Este projeto **não envolve dinheiro real**. Nenhuma transação ocorre. Nenhum backend existe. Nenhuma regulamentação foi violada. Nenhuma ficha foi apostada. Nenhuma lágrima foi derramada (pelo site — pelo desenvolvedor, não podemos confirmar).
+Este projeto **não envolve dinheiro real**. Nenhuma transação ocorre. Nenhum backend existe. Nenhuma regulamentação foi violada. Nenhuma ficha foi apostada. Nenhuma bolinha de Plinko foi ferida durante a produção.
 
 Se você tem problemas com jogos de azar, procure ajuda profissional.
 Se você tem problemas com usar IA para escrever todo o seu código, bem-vindo a 2026.
 
 *Feito com React, Copilot, Claude, e uma quantidade preocupante de fé em Math.random().*
-*66 modules. 295KB de JavaScript. Zero arrependimentos.*
+*70 modules. 311KB de JavaScript. 46 achievements. 6 jogos. Zero arrependimentos.*

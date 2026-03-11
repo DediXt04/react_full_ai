@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
+
+.not-found-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 75vh;
+  padding: 2rem;
+}
+
+.not-found-card {
+  text-align: center;
+  background: rgba(6, 10, 30, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1.5rem;
+  padding: 3rem 2.5rem;
+  max-width: 480px;
+  width: 100%;
+  backdrop-filter: blur(12px);
+}
+
+.not-found-icon {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+  animation: slot-spin 2s ease-in-out infinite;
+}
+
+@keyframes slot-spin {
+  0%, 100% { transform: rotateY(0deg); }
+  50% { transform: rotateY(180deg); }
+}
+
+.not-found-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff4444, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  line-height: 1;
+  text-shadow: none;
+}
+
+.not-found-subtitle {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  color: #8899aa;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 0.75rem 0 1.25rem;
+}
+
+.not-found-desc {
+  color: #6b7f94;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.not-found-btn {
+  display: inline-block;
+  padding: 0.85rem 2rem;
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  color: #0a0e1a;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.not-found-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+}
+
+@media (max-width: 480px) {
+  .not-found-card { padding: 2rem 1.5rem; }
+  .not-found-title { font-size: 3.5rem; }
+  .not-found-icon { font-size: 3rem; }
+}

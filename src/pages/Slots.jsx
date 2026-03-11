@@ -12,7 +12,7 @@ const SYMBOLS = [
   { icon: "🍇", label: "Grape", weight: 8 },
   { icon: "🍀", label: "Clover", weight: 5 },
   { icon: "7️⃣", label: "Seven", weight: 3 },
-  { icon: "💎", label: "Diamond", weight: 1 },
+  { icon: "💎", label: "Diamond", weight: 2 },
 ];
 
 const PAYOUTS = [
@@ -29,7 +29,7 @@ const PAYOUTS = [
     color: "#ffd700",
   },
   { condition: "3 matching", label: "Triple", multiplier: 5, color: "#a855f7" },
-  { condition: "2 matching", label: "Pair", multiplier: 2, color: "#10b981" },
+  { condition: "2 matching", label: "Pair", multiplier: 2.14, color: "#10b981" },
 ];
 
 function weightedRandom() {
@@ -52,7 +52,8 @@ const [betAmount, setBetAmount] = useState(50);
   const [winMultiplier, setWinMultiplier] = useState(null);
   const [winEffect, setWinEffect] = useState(false); // small win
   const [jackpotEffect, setJackpotEffect] = useState(false); // 💎💎💎
-  const [autoSpin, setAutoSpin] = useState(false);
+  const [autoSpins, setAutoSpins] = useState(0); // 0=off, -1=infinite, N=remaining
+  const autoRef = useRef(0);
   const [jackpot, setJackpot] = useState(10000);
   const [lastResults, setLastResults] = useState([]);
   const [streak, setStreak] = useState(0);
@@ -74,16 +75,26 @@ const [betAmount, setBetAmount] = useState(50);
     };
   }, []);
 
-  // Auto-spin loop
+  const stopAuto = () => { setAutoSpins(0); autoRef.current = 0; };
+  const startAuto = (count) => {
+    setAutoSpins(count);
+    autoRef.current = count;
+    setTimeout(() => handleSpinRef.current?.(), 50);
+  };
+  const handleSpinRef = useRef(null);
+
+  // Auto-spin: queue next after each spin completes
   useEffect(() => {
-    if (autoSpin && !isSpinning && balance >= betAmount && betAmount > 0) {
-      autoTimeoutRef.current = setTimeout(() => handleSpin(), 900);
-    } else if (autoSpin && balance < betAmount) {
-      setAutoSpin(false);
+    if (!isSpinning && autoRef.current !== 0) {
+      if (balance >= betAmount && betAmount > 0) {
+        autoTimeoutRef.current = setTimeout(() => handleSpinRef.current?.(), 900);
+      } else {
+        stopAuto();
+      }
     }
     return () => clearTimeout(autoTimeoutRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoSpin, isSpinning, balance, betAmount]);
+  }, [isSpinning, balance, betAmount]);
 
   const handleSpin = useCallback(() => {
     if (isSpinning) return;
@@ -150,7 +161,7 @@ const [betAmount, setBetAmount] = useState(50);
       if (a === "💎" && b === "💎" && c === "💎") mult = 10;
       else if (a === "7️⃣" && b === "7️⃣" && c === "7️⃣") mult = 7;
       else if (a === b && b === c) mult = 5;
-      else if (a === b || a === c || b === c) mult = 2;
+      else if (a === b || a === c || b === c) mult = 2.14;
 
       const won = mult > 0;
       const winAmount = won ? betAmount * mult : 0;
@@ -183,26 +194,42 @@ const [betAmount, setBetAmount] = useState(50);
       const newBalance = won ? balance - betAmount + winAmount : balance - betAmount;
       updateStats(prev => {
         const newStreak = won ? prev.winStreak + 1 : 0;
+        const newLossStreak = won ? 0 : (prev.lossStreak || 0) + 1;
         return {
           totalBets: prev.totalBets + 1,
           slotsPlayed: prev.slotsPlayed + 1,
           winStreak: newStreak,
           maxWinStreak: Math.max(prev.maxWinStreak, newStreak),
+          lossStreak: newLossStreak,
+          maxLossStreak: Math.max(prev.maxLossStreak || 0, newLossStreak),
           hitZero: prev.hitZero || newBalance <= 0,
         };
       });
+      if (betAmount >= 500) unlock('big-bet');
       if (won) {
         if (a === b && b === c) unlock('slots-triple');
         if (mult === 10) unlock('slots-jackpot');
         checkWinAchievements({ betAmount, balance, newBalance, unlock, stats: achStats });
       }
 
+      // Auto-spin decrement
+      const remaining = autoRef.current;
+      if (remaining > 0) {
+        const next = remaining - 1;
+        setAutoSpins(next);
+        autoRef.current = next;
+      }
+
       setIsSpinning(false);
     }, evalTime);
   }, [isSpinning, betAmount, balance, setBalance]);
 
+  handleSpinRef.current = handleSpin;
+
   const handleQuickBet = (frac) =>
     setBetAmount(Math.max(1, Math.floor(balance * frac)));
+
+  const isAuto = autoSpins !== 0;
 
   return (
     <div className="slots-page fade-in">
@@ -297,31 +324,31 @@ const [betAmount, setBetAmount] = useState(50);
                 <div className="bet-presets">
                   <button
                     onClick={() => handleQuickBet(0.01)}
-                    disabled={isSpinning}
+                    disabled={isSpinning || isAuto}
                   >
                     1%
                   </button>
                   <button
                     onClick={() => handleQuickBet(0.05)}
-                    disabled={isSpinning}
+                    disabled={isSpinning || isAuto}
                   >
                     5%
                   </button>
                   <button
                     onClick={() => handleQuickBet(0.1)}
-                    disabled={isSpinning}
+                    disabled={isSpinning || isAuto}
                   >
                     10%
                   </button>
                   <button
                     onClick={() => handleQuickBet(0.5)}
-                    disabled={isSpinning}
+                    disabled={isSpinning || isAuto}
                   >
                     50%
                   </button>
                   <button
                     onClick={() => handleQuickBet(1)}
-                    disabled={isSpinning}
+                    disabled={isSpinning || isAuto}
                   >
                     All
                   </button>
@@ -341,7 +368,7 @@ const [betAmount, setBetAmount] = useState(50);
                       )
                     )
                   }
-                  disabled={isSpinning}
+                  disabled={isSpinning || isAuto}
                   className="bet-input"
                 />
               </div>
@@ -352,7 +379,7 @@ const [betAmount, setBetAmount] = useState(50);
               <button
                 className={`spin-btn ${isSpinning ? "spinning-btn" : ""}`}
                 onClick={handleSpin}
-                disabled={isSpinning || betAmount > balance || betAmount <= 0}
+                disabled={isSpinning || betAmount > balance || betAmount <= 0 || isAuto}
               >
                 {isSpinning ? (
                   <>
@@ -364,16 +391,26 @@ const [betAmount, setBetAmount] = useState(50);
                   </>
                 )}
               </button>
+            </div>
 
-              <label className="auto-label">
-                <div
-                  className={`toggle-track ${autoSpin ? "on" : ""}`}
-                  onClick={() => setAutoSpin((s) => !s)}
-                >
-                  <div className="toggle-thumb" />
-                </div>
-                <span>Auto</span>
-              </label>
+            {/* Auto-spin controls */}
+            <div className="auto-spin-row">
+              {!isAuto ? (
+                <>
+                  <span className="auto-tag">AUTO</span>
+                  <button className="btn-auto-slots" onClick={() => startAuto(5)} disabled={isSpinning || balance < betAmount}>5×</button>
+                  <button className="btn-auto-slots" onClick={() => startAuto(10)} disabled={isSpinning || balance < betAmount}>10×</button>
+                  <button className="btn-auto-slots" onClick={() => startAuto(25)} disabled={isSpinning || balance < betAmount}>25×</button>
+                  <button className="btn-auto-slots btn-auto-inf" onClick={() => startAuto(-1)} disabled={isSpinning || balance < betAmount}>∞</button>
+                </>
+              ) : (
+                <>
+                  <span className="auto-counter-slots">
+                    🔄 {autoSpins === -1 ? '∞' : autoSpins} spin{autoSpins !== 1 ? 's' : ''} left
+                  </span>
+                  <button className="btn-auto-stop-slots" onClick={stopAuto}>⏹ STOP</button>
+                </>
+              )}
             </div>
 
             {/* Status */}

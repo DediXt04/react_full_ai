@@ -119,6 +119,36 @@ button:disabled {
   transform: translateY(-1px);
 }
 
+/* ===== Shared: Game Over / Reload Demo ===== */
+.game-over-message {
+  text-align: center;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 68, 68, 0.08);
+  border: 1px solid rgba(255, 68, 68, 0.2);
+}
+.game-over-message p {
+  margin: 0 0 0.75rem;
+  color: #ff8888;
+  font-weight: 600;
+}
+.btn-reload-demo {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: #fff !important;
+  font-weight: 700;
+  padding: 0.6rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  opacity: 1 !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-reload-demo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+}
+
 .btn-success {
   background: linear-gradient(135deg, #10b981, #059669);
   color: #022414;

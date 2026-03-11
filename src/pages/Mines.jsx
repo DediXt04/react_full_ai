@@ -9,7 +9,7 @@ const GRID_SIZE = 25;
 // Calculate multiplier for revealing `revealed` safe tiles out of `total` with `mines` mines
 function calcMultiplier(revealed, total, mines) {
   if (revealed === 0) return 1;
-  let mult = 0.96; // house edge ~4%
+  let mult = 1; // fair odds (EV ≈ $1.00)
   for (let i = 0; i < revealed; i++) {
     mult *= (total - i) / (total - mines - i);
   }
@@ -53,6 +53,7 @@ export default function Mines({ balance, setBalance }) {
     setStatusMsg("");
 
     unlock("first-mine");
+    if (betAmount >= 500) unlock("big-bet");
     updateStats((prev) => ({
       totalBets: prev.totalBets + 1,
       minesPlayed: (prev.minesPlayed || 0) + 1,
@@ -73,8 +74,11 @@ export default function Mines({ balance, setBalance }) {
       setMultiplier(0);
       setStatusMsg(`BOOM! Hit a mine - Lost $${betAmount.toFixed(2)}`);
 
+      if (revealed.size === 0) unlock("mines-first-boom");
       updateStats((prev) => ({
         winStreak: 0,
+        lossStreak: (prev.lossStreak || 0) + 1,
+        maxLossStreak: Math.max(prev.maxLossStreak || 0, (prev.lossStreak || 0) + 1),
         hitZero: prev.hitZero || (balance - betAmount) <= 0,
       }));
       return;
@@ -119,6 +123,7 @@ export default function Mines({ balance, setBalance }) {
       return {
         winStreak: newStreak,
         maxWinStreak: Math.max(prev.maxWinStreak, newStreak),
+        lossStreak: 0,
       };
     });
   };
@@ -276,6 +281,15 @@ export default function Mines({ balance, setBalance }) {
                 </button>
               )}
             </div>
+
+            {balance === 0 && !isPlaying && (
+              <div className="game-over-message" style={{ marginTop: '0.75rem' }}>
+                <p>😢 You ran out of credits!</p>
+                <button className="btn-reload-demo" onClick={() => setBalance(p => p + 1000)}>
+                  + Reload Demo ($1,000)
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Info panel */}

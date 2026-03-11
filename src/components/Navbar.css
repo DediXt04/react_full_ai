@@ -300,7 +300,6 @@
 /* ── Responsive ── */
 @media (max-width: 1024px) {
   .nav-label { display: none; }
-  .dropdown-arrow { display: none; }
   .nav-icon { font-size: 1rem; }
   .nav-link { padding: 0.5rem 0.7rem; }
   .navbar-container { gap: 1rem; }
@@ -312,22 +311,40 @@
   .navbar-right { order: 2; margin-left: auto; }
   .nav-links { order: 3; width: 100%; justify-content: center; gap: 0; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 0.4rem; }
   .nav-label { display: none; }
-  .dropdown-arrow { display: none; }
   .nav-icon { font-size: 1.1rem; }
   .demo-pill { display: none; }
 
+  /* Dropdown: full-width on mobile */
+  .dropdown-arrow { display: inline-block; font-size: 0.6rem; }
   .dropdown-menu {
+    position: fixed;
+    top: auto;
+    bottom: 0;
     left: 0;
-    transform: translateX(0) translateY(4px);
+    right: 0;
+    transform: translateY(100%);
+    min-width: 100%;
+    border-radius: 16px 16px 0 0;
+    padding: 0.75rem 0;
+    max-height: 60vh;
+    overflow-y: auto;
   }
+  .dropdown-menu::before { display: none; }
   .dropdown-menu.show {
-    transform: translateX(0) translateY(0);
+    transform: translateY(0);
   }
+  .dropdown-item {
+    padding: 0.85rem 1.5rem;
+    font-size: 0.8rem;
+  }
+  .dropdown-item-icon { font-size: 1.2rem; }
 }
 
 @media (max-width: 420px) {
   .brand-name { font-size: 0.9rem; }
   .balance-amount { font-size: 0.85rem; }
+  .balance-display { padding: 0.35rem 0.6rem; }
+  .balance-label { font-size: 0.5rem; }
   .nav-link { padding: 0.45rem 0.55rem; }
   .nav-icon { font-size: 1rem; }
   .nav-badge { display: none; }

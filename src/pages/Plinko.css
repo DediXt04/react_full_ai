@@ -1,0 +1,140 @@
+/* ===== PLINKO — Casino Neon Dark (matches Slots/Mines) ===== */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@700;900&display=swap');
+
+/* ── Page ── */
+.plinko-page {
+  width: 100%;
+  color: #e6eef8;
+  padding: 1.5rem;
+  min-height: 80vh;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+/* ── Header bar ── */
+.plinko-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.plinko-header .header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.plinko-header .title-icon {
+  font-size: 1.6rem;
+  filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.4));
+}
+.plinko-header h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  color: #fff;
+  margin: 0;
+  text-shadow: 0 0 14px rgba(0, 212, 255, 0.4);
+}
+
+/* Risk badge */
+.plinko-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(0, 0, 0, 0.3));
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 0.75rem;
+}
+.plinko-badge .badge-label {
+  font-size: 0.55rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(0, 212, 255, 0.6);
+}
+.plinko-badge .badge-value {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #00d4ff;
+  text-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
+}
+
+/* ── Container grid ── */
+.plinko-container {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+/* ── Board (canvas card) ── */
+.plinko-board {
+  padding: 0.5rem !important;
+  min-height: 520px;
+}
+.plinko-canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  display: block;
+  border-radius: 10px;
+}
+
+/* ── Option sections (rows / risk) ── */
+.plinko-option-section {
+  margin-bottom: 0.6rem;
+}
+.plinko-option-section .bet-label {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+.plinko-presets {
+  display: flex;
+  gap: 0.35rem;
+}
+.plinko-presets button {
+  flex: 1;
+  text-align: center;
+}
+.plinko-presets button.active {
+  background: rgba(0, 212, 255, 0.15) !important;
+  border-color: #00d4ff !important;
+  color: #00d4ff !important;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.2);
+}
+
+/* ── Last results ── */
+.plinko-results {
+  margin-top: 0.75rem;
+}
+.plinko-result-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.35rem;
+}
+.plinko-result-tag {
+  padding: 0.15rem 0.45rem;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .plinko-container {
+    grid-template-columns: 1fr;
+  }
+  .plinko-board { min-height: 400px; }
+  .plinko-canvas { min-height: 400px; }
+}
+@media (max-width: 400px) {
+  .plinko-page { padding: 1rem 0.75rem; }
+  .plinko-header h2 { font-size: 1rem; }
+  .plinko-board { min-height: 340px; }
+  .plinko-canvas { min-height: 340px; }
+}

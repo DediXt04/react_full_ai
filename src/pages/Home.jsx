@@ -97,7 +97,15 @@ function Home() {
       accent: "#ef4444",
       badge: "NEW",
     },
-
+    {
+      id: "plinko",
+      icon: "📍",
+      title: "Plinko",
+      desc: "Drop the ball and watch it bounce through pegs. Land on high multipliers to win big!",
+      tags: ["Up to 1000×", "3 Risk Levels"],
+      accent: "#06b6d4",
+      badge: "NEW",
+    },
   ];
 
   const gamesRef = useReveal();
@@ -140,6 +148,9 @@ function Home() {
             <Link to="/mines" className="btn-hero btn-mines">
               💣 Play Mines
             </Link>
+            <Link to="/plinko" className="btn-hero btn-plinko">
+              📍 Play Plinko
+            </Link>
           </div>
           <div className="hero-stats">
             <div className="hstat">
@@ -148,7 +159,7 @@ function Home() {
             </div>
             <div className="hstat-divider" />
             <div className="hstat">
-              <span className="hstat-val">5</span>
+              <span className="hstat-val">6</span>
               <span className="hstat-label">Games</span>
             </div>
             <div className="hstat-divider" />
@@ -320,6 +331,9 @@ function Home() {
             </Link>
             <Link to="/mines" className="btn-hero btn-mines">
               💣 Play Mines
+            </Link>
+            <Link to="/plinko" className="btn-hero btn-plinko">
+              📍 Play Plinko
             </Link>
           </div>
         </div>
