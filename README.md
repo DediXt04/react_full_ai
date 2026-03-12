@@ -60,7 +60,7 @@ src/
 │   ├── Crash.jsx         # Gráfico subindo até seu ego cair
 │   ├── Mines.jsx         # Campo minado com consequências emocionais
 │   ├── Plinko.jsx        # Galton board com bolinha dourada e multiplicadores que te dão esperança falsa
-│   ├── Achievements.jsx  # 46 conquistas pra te dar ilusão de progresso
+│   ├── Achievements.jsx  # 52 conquistas organizadas por seções de raridade
 │   └── NotFound.jsx      # 404 com tema de cassino, porque até se perder aqui é on-brand
 ├── components/
 │   ├── Navbar.jsx        # Dropdown de jogos que finalmente funciona (6 jogos e contando)
@@ -68,7 +68,7 @@ src/
 │   ├── AchievementToast.jsx  # Pop-up que te parabeniza por perder
 │   └── ParticleBackground.jsx # Bolinhas flutuantes pra disfarçar o vazio
 ├── context/
-│   └── AchievementContext.jsx # 46 achievements, 4 raridades, e um useEffect que virou Frankenstein
+│   └── AchievementContext.jsx # 52 achievements, 4 raridades, e um useEffect que virou Frankenstein
 ├── utils/
 │   └── achievementHelpers.js  # Lógica de conquistas centralizada (estava duplicada em 5 arquivos, agora em 6)
 ├── hooks/
@@ -82,7 +82,7 @@ src/
 
 - ✅ **$1.000 de créditos demo** — recarregáveis infinitamente em qualquer jogo, assim como sua esperança
 - ✅ **6 jogos** — porque 5 formas de perder não era suficiente
-- ✅ **46 achievements** — bronze, prata, ouro e **lendário** pra te recompensar pelo sofrimento em escala progressiva
+- ✅ **52 achievements** — bronze, prata, ouro e **lendário** pra te recompensar pelo sofrimento em escala progressiva
 - ✅ **Auto-spin/auto-drop** — Roleta, Slots e Plinko. Pra quando você quer perder mas está ocupado
 - ✅ **Navbar com dropdown** — 6 jogos organizados. Limpa, elegante, funcional (na terceira tentativa)
 - ✅ **Sem dinheiro real** — o único cassino honesto do mundo
@@ -96,14 +96,14 @@ src/
 
 ## Sistema de Achievements
 
-46 conquistas organizadas por raridade, porque gamificação sobre gamificação é exatamente o que o mundo precisava.
+52 conquistas organizadas por raridade com seções visuais, porque gamificação sobre gamificação é exatamente o que o mundo precisava.
 
 | Raridade    | Qtd | Exemplos                                                                      | Descrição real                                               |
 | ----------- | --- | ----------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| 🥉 Bronze   | 11  | First Spin, Ball Dropper, Chicken                                             | "Parabéns, você clicou num botão"                            |
-| 🥈 Prata    | 14  | On Fire (3 wins), Instant Regret (mina no 1º click), Unlucky (5 losses)       | "Parabéns, o Math.random() te favoreceu. Ou não."            |
-| 🥇 Ouro     | 17  | Unstoppable (7 wins), Jackpot Lane (100× no Plinko), Astronaut (50× no Crash) | "Parabéns, você deveria ter parado enquanto estava ganhando" |
-| 💜 Lendário | 4   | No Life (500 bets), Wolf of Wall Street ($25k)                                | "Parabéns, você precisa sair de casa"                        |
+| 🥉 Bronze   | 14  | First Spin, Boom Enthusiast, Instant Regret                                   | "Parabéns, você clicou num botão"                            |
+| 🥈 Prata    | 16  | On Fire (3 wins), Card Counter (20 BJ), Plinko Addict (50 drops)             | "Parabéns, o Math.random() te favoreceu. Ou não."            |
+| 🥇 Ouro     | 14  | Unstoppable (7 wins), Orbit Achieved (20×), Five Card Charlie                 | "Parabéns, você deveria ter parado enquanto estava ganhando" |
+| 💜 Lendário | 8   | Crypto Whale ($50k), Cursed (10 losses), Eternal Gambler (1000 bets)          | "Parabéns, você precisa sair de casa"                        |
 
 ---
 
@@ -142,7 +142,7 @@ Cada pino tem 50% de chance de ir pra esquerda ou direita. Distribuição binomi
 Sim, e a principal lição é: _a casa sempre vence_. Testamos. A IA confirmou. Matemática conferiu.
 
 **Você realmente deixou uma IA escrever tudo?**
-Sim. O dev abriu o Copilot, descreveu o projeto em português informal, e foi tomar café. Voltou com um cassino funcional de 6 jogos, 46 achievements, física de Plinko, e um README que sabe mais sobre o projeto que o próprio dev. Esse é o estado da engenharia de software em 2026.
+Sim. O dev abriu o Copilot, descreveu o projeto em português informal, e foi tomar café. Voltou com um cassino funcional de 6 jogos, 52 achievements, física de Plinko, e um README que sabe mais sobre o projeto que o próprio dev. Esse é o estado da engenharia de software em 2026.
 
 **O código é bom?**
 É código de IA. Funciona perfeitamente até o momento em que você tenta entender por quê. Mas pelo menos agora está _refatorado_ — achievements centralizados, refs sincronizados, design padronizado. Uma bagunça _organizada_.
@@ -157,4 +157,4 @@ Se você tem problemas com jogos de azar, procure ajuda profissional.
 Se você tem problemas com usar IA para escrever todo o seu código, bem-vindo a 2026.
 
 _Feito com React, Copilot, Claude, e uma quantidade preocupante de fé em Math.random()._
-_70 modules. 311KB de JavaScript. 46 achievements. 6 jogos. Zero arrependimentos._
+_70 modules. 313KB de JavaScript. 52 achievements. 6 jogos. Zero arrependimentos._

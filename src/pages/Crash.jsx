@@ -160,6 +160,7 @@ export default function Crash({ balance, setBalance }) {
     const newBalance = balance - betAmount + winnings;
     if (mult >= 5) unlock("crash-5x");
     if (mult >= 10) unlock("crash-10x");
+    if (mult >= 20) unlock("crash-20x");
     if (mult >= 50) unlock("crash-50x");
     if (mult < 1.5) unlock("crash-chicken");
     if (crashPoint && Math.abs(mult - crashPoint) <= 0.1) unlock("crash-close-call");

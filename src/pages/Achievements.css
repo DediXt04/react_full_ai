@@ -140,6 +140,37 @@
   box-shadow: 0 0 12px rgba(0, 212, 255, 0.1);
 }
 
+/* ===== Section Headers ===== */
+.ach-section {
+  margin-bottom: 2rem;
+}
+.ach-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-left: 3px solid;
+  background: rgba(255,255,255,0.03);
+}
+.ach-section-header.bronze    { color: #cd7f32; border-left-color: #cd7f32; }
+.ach-section-header.silver    { color: #c0c0c0; border-left-color: #c0c0c0; }
+.ach-section-header.gold      { color: #ffd700; border-left-color: #ffd700; }
+.ach-section-header.legendary { color: #a855f7; border-left-color: #a855f7; }
+.ach-section-icon { font-size: 1.1rem; }
+.ach-section-label { flex: 1; }
+.ach-section-count {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  letter-spacing: 1px;
+}
+
 /* ===== Grid ===== */
 .ach-grid {
   display: grid;

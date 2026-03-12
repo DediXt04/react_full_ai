@@ -1,73 +1,67 @@
 import { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
 
 const ACHIEVEMENTS = [
-  // Bronze (easy)
+  // ═══ BRONZE — Easy / First-time actions ═══
   { id: "first-spin",      title: "First Spin",        desc: "Spin the roulette for the first time",           rarity: "bronze", icon: "🎡" },
   { id: "first-pull",      title: "First Pull",        desc: "Play the slot machine for the first time",       rarity: "bronze", icon: "🎰" },
   { id: "first-hand",      title: "First Hand",        desc: "Play a hand of blackjack",                       rarity: "bronze", icon: "🃏" },
+  { id: "first-crash",     title: "Rocket Rider",      desc: "Play crash for the first time",                  rarity: "bronze", icon: "🚀" },
+  { id: "first-mine",      title: "Bomb Defuser",      desc: "Play mines for the first time",                  rarity: "bronze", icon: "💣" },
+  { id: "first-plinko",    title: "Ball Dropper",      desc: "Play plinko for the first time",                 rarity: "bronze", icon: "📍" },
   { id: "first-win",       title: "Beginner's Luck",   desc: "Win your first bet in any game",                 rarity: "bronze", icon: "🍀" },
-  { id: "tried-all",       title: "Explorer",          desc: "Play all 6 games at least once",                 rarity: "bronze", icon: "🧭" },
   { id: "bet-10",          title: "Small Roller",      desc: "Place 10 bets total across all games",           rarity: "bronze", icon: "🎲" },
   { id: "green-bet",       title: "Feeling Lucky",     desc: "Bet on green in roulette",                       rarity: "bronze", icon: "🟢" },
+  { id: "crash-chicken",   title: "Chicken",           desc: "Cash out below 1.5× in crash",                   rarity: "bronze", icon: "🐔" },
+  { id: "penny-bet",       title: "Penny Pincher",     desc: "Win a bet of $10 or less",                       rarity: "bronze", icon: "🪙" },
+  { id: "mines-first-boom",title: "Instant Regret",    desc: "Hit a mine on the very first click",             rarity: "bronze", icon: "💥" },
+  { id: "crash-10-games",  title: "Frequent Flyer",    desc: "Play 10 Crash games",                            rarity: "bronze", icon: "🛩️" },
+  { id: "mines-3-games",   title: "Boom Enthusiast",   desc: "Play 3 Mines games",                             rarity: "bronze", icon: "🧨" },
 
-  // Silver (medium)
+  // ═══ SILVER — Moderate challenge ═══
+  { id: "tried-all",       title: "Explorer",          desc: "Play all 6 games at least once",                 rarity: "silver", icon: "🧭" },
   { id: "win-streak-3",    title: "On Fire",           desc: "Win 3 bets in a row",                            rarity: "silver", icon: "🔥" },
   { id: "double-up",       title: "Double Up",         desc: "Reach $2,000 balance",                           rarity: "silver", icon: "💵" },
   { id: "bet-50",          title: "Regular",           desc: "Place 50 bets total across all games",           rarity: "silver", icon: "🎯" },
+  { id: "bet-200",         title: "Veteran",           desc: "Place 200 bets total across all games",          rarity: "silver", icon: "🏆" },
   { id: "slots-triple",    title: "Triple Match",      desc: "Get 3 matching symbols on slots",                rarity: "silver", icon: "💎" },
   { id: "bj-21",           title: "Twenty-One",        desc: "Get exactly 21 in blackjack",                    rarity: "silver", icon: "🎯" },
   { id: "bj-double-win",   title: "Bold Move",         desc: "Win after doubling down in blackjack",           rarity: "silver", icon: "✖️" },
   { id: "roulette-5-wins", title: "Roulette Master",   desc: "Win 5 roulette spins",                           rarity: "silver", icon: "🎡" },
   { id: "comeback",        title: "Comeback Kid",      desc: "Win a bet when balance is below $100",           rarity: "silver", icon: "💪" },
-  { id: "all-in-win",      title: "All In!",           desc: "Bet your entire balance and win",                rarity: "silver", icon: "🤑" },
+  { id: "crash-5x",        title: "Diamond Hands",     desc: "Cash out at 5× or higher in crash",              rarity: "silver", icon: "💎" },
+  { id: "crash-close-call",title: "Close Call",         desc: "Cash out within 0.1× of the crash point",        rarity: "silver", icon: "😰" },
+  { id: "mines-10-gems",   title: "Gem Collector",      desc: "Reveal 10 gems in a single mines round",        rarity: "silver", icon: "💎" },
+  { id: "lose-streak-5",   title: "Unlucky",           desc: "Lose 5 bets in a row",                           rarity: "silver", icon: "😭" },
+  { id: "big-bet",         title: "High Stakes",       desc: "Place a bet of $500 or more",                    rarity: "silver", icon: "💸" },
+  { id: "slots-50",        title: "Slot Addict",       desc: "Play 50 slot spins",                             rarity: "silver", icon: "🎰" },
+  { id: "plinko-50",       title: "Plinko Addict",     desc: "Play 50 Plinko drops",                           rarity: "silver", icon: "📍" },
+  { id: "bj-20",           title: "Card Counter",      desc: "Play 20 Blackjack hands",                        rarity: "silver", icon: "🃏" },
 
-  // Gold (hard)
+  // ═══ GOLD — Hard ═══
+  { id: "all-in-win",      title: "All In!",           desc: "Bet your entire balance and win",                rarity: "gold",   icon: "🤑" },
+  { id: "bj-5-card",       title: "Five Card Charlie", desc: "Win blackjack with 5 or more cards",             rarity: "gold",   icon: "🖐️" },
   { id: "win-streak-7",    title: "Unstoppable",       desc: "Win 7 bets in a row",                            rarity: "gold",   icon: "⚡" },
   { id: "balance-5k",      title: "High Roller",       desc: "Reach $5,000 balance",                           rarity: "gold",   icon: "👑" },
   { id: "balance-10k",     title: "Millionaire Vibes",  desc: "Reach $10,000 balance",                         rarity: "gold",   icon: "💰" },
   { id: "green-win",       title: "Jackpot Hunter",    desc: "Win betting on green in roulette (35:1)",        rarity: "gold",   icon: "🟢" },
   { id: "bj-blackjack",    title: "Natural 21",        desc: "Get a natural blackjack (Ace + face card)",      rarity: "gold",   icon: "🃏" },
   { id: "slots-jackpot",   title: "Slot Lord",         desc: "Hit the jackpot on slots (💎💎💎)",              rarity: "gold",   icon: "💎" },
-  { id: "bet-200",         title: "Veteran",           desc: "Place 200 bets total across all games",          rarity: "gold",   icon: "🏆" },
+  { id: "bet-500",         title: "No Life",           desc: "Place 500 bets total across all games",          rarity: "gold",   icon: "☠️" },
   { id: "survived-zero",   title: "Phoenix",           desc: "Go to $0 balance, reset, and reach $2,000",     rarity: "gold",   icon: "🔥" },
-
-  // Crash-specific
-  { id: "first-crash",     title: "Rocket Rider",      desc: "Play crash for the first time",                  rarity: "bronze", icon: "🚀" },
-  { id: "crash-5x",        title: "Diamond Hands",     desc: "Cash out at 5× or higher in crash",              rarity: "silver", icon: "💎" },
-  { id: "crash-close-call",title: "Close Call",         desc: "Cash out within 0.1× of the crash point",        rarity: "silver", icon: "😰" },
   { id: "crash-10x",       title: "To The Moon",       desc: "Cash out at 10× or higher in crash",             rarity: "gold",   icon: "🌙" },
-
-  // Mines-specific
-  { id: "first-mine",      title: "Bomb Defuser",      desc: "Play mines for the first time",                  rarity: "bronze", icon: "💣" },
-  { id: "mines-10-gems",   title: "Gem Collector",      desc: "Reveal 10 gems in a single mines round",        rarity: "silver", icon: "💎" },
-  { id: "mines-sweep",     title: "Mine Sweeper",       desc: "Reveal ALL safe tiles without hitting a mine",  rarity: "gold",   icon: "🧹" },
-
-  // ── New achievements ──
-  // Bronze
-  { id: "crash-chicken",   title: "Chicken",           desc: "Cash out below 1.5× in crash",                   rarity: "bronze", icon: "🐔" },
-  { id: "penny-bet",       title: "Penny Pincher",     desc: "Win a bet of $10 or less",                       rarity: "bronze", icon: "🪙" },
-
-  // Silver
-  { id: "lose-streak-5",   title: "Unlucky",           desc: "Lose 5 bets in a row",                           rarity: "silver", icon: "😭" },
-  { id: "big-bet",         title: "High Stakes",       desc: "Place a bet of $500 or more",                    rarity: "silver", icon: "💸" },
-  { id: "slots-50",        title: "Slot Addict",       desc: "Play 50 slot spins",                             rarity: "silver", icon: "🎰" },
-  { id: "bj-5-card",       title: "Five Card Charlie", desc: "Win blackjack with 5 or more cards",             rarity: "silver", icon: "🖐️" },
-  { id: "mines-first-boom",title: "Instant Regret",    desc: "Hit a mine on the very first click",             rarity: "silver", icon: "💥" },
-
-  // Gold
-  { id: "win-streak-10",   title: "Legendary Run",     desc: "Win 10 bets in a row",                           rarity: "gold",   icon: "🌟" },
-  { id: "crash-50x",       title: "Astronaut",         desc: "Cash out at 50× or higher in crash",             rarity: "gold",   icon: "🧑‍🚀" },
+  { id: "crash-20x",       title: "Orbit Achieved",    desc: "Cash out at 20× or higher in crash",             rarity: "gold",   icon: "🛸" },
   { id: "roulette-10-wins",title: "Spin Doctor",       desc: "Win 10 roulette spins",                          rarity: "gold",   icon: "🎡" },
   { id: "big-win",         title: "Mega Win",          desc: "Win $1,000 or more in a single bet",             rarity: "gold",   icon: "🤯" },
 
-  // Legendary
-  { id: "bet-500",         title: "No Life",           desc: "Place 500 bets total across all games",          rarity: "legendary", icon: "☠️" },
+  // ═══ LEGENDARY — Extremely hard ═══
+  { id: "win-streak-10",   title: "Legendary Run",     desc: "Win 10 bets in a row",                           rarity: "legendary", icon: "🌟" },
+  { id: "crash-50x",       title: "Astronaut",         desc: "Cash out at 50× or higher in crash",             rarity: "legendary", icon: "🧑‍🚀" },
+  { id: "plinko-100x",     title: "Jackpot Lane",      desc: "Land a 100× or higher multiplier in plinko",     rarity: "legendary", icon: "🎯" },
+  { id: "mines-sweep",     title: "Mine Sweeper",       desc: "Reveal ALL safe tiles without hitting a mine",  rarity: "legendary", icon: "🧹" },
   { id: "balance-25k",     title: "Wolf of Wall Street",desc: "Reach $25,000 balance",                         rarity: "legendary", icon: "🐺" },
-
-  // Plinko-specific
-  { id: "first-plinko",    title: "Ball Dropper",      desc: "Play plinko for the first time",                 rarity: "bronze", icon: "📍" },
-  { id: "plinko-100x",     title: "Jackpot Lane",      desc: "Land a 100× or higher multiplier in plinko",     rarity: "gold",   icon: "🎯" },
-
+  { id: "balance-50k",     title: "Crypto Whale",      desc: "Reach $50,000 balance",                          rarity: "legendary", icon: "🐋" },
+  { id: "lose-streak-10",  title: "Cursed",            desc: "Lose 10 bets in a row",                          rarity: "legendary", icon: "💀" },
+  { id: "bet-1000",        title: "Eternal Gambler",   desc: "Place 1000 bets total across all games",         rarity: "legendary", icon: "♾️" },
 ];
 
 const ACH_STORAGE_KEY = "luckyspin_achievements";
@@ -140,19 +134,31 @@ export function AchievementProvider({ children }) {
 
   // Centralized stats-based achievement checks
   useEffect(() => {
+    // Bet milestones
     if (stats.totalBets >= 10) unlock('bet-10');
     if (stats.totalBets >= 50) unlock('bet-50');
     if (stats.totalBets >= 200) unlock('bet-200');
     if (stats.totalBets >= 500) unlock('bet-500');
+    if (stats.totalBets >= 1000) unlock('bet-1000');
+    // Win streaks
     if (stats.maxWinStreak >= 3) unlock('win-streak-3');
     if (stats.maxWinStreak >= 7) unlock('win-streak-7');
     if (stats.maxWinStreak >= 10) unlock('win-streak-10');
+    // Loss streaks
     if ((stats.maxLossStreak || 0) >= 5) unlock('lose-streak-5');
+    if ((stats.maxLossStreak || 0) >= 10) unlock('lose-streak-10');
+    // Roulette
     if (stats.rouletteWins >= 5) unlock('roulette-5-wins');
     if (stats.rouletteWins >= 10) unlock('roulette-10-wins');
+    // Game-specific play counts
     if ((stats.slotsPlayed || 0) >= 50) unlock('slots-50');
-    if (stats.roulettePlayed > 0 && stats.slotsPlayed > 0 && stats.bjPlayed > 0 && (stats.crashPlayed || 0) > 0 && (stats.minesPlayed || 0) > 0 && (stats.plinkoPlayed || 0) > 0) unlock('tried-all');
+    if ((stats.plinkoPlayed || 0) >= 50) unlock('plinko-50');
+    if ((stats.bjPlayed || 0) >= 20) unlock('bj-20');
+    if ((stats.crashPlayed || 0) >= 10) unlock('crash-10-games');
+    if ((stats.minesPlayed || 0) >= 3) unlock('mines-3-games');
     if ((stats.plinkoPlayed || 0) > 0) unlock('first-plinko');
+    // Explorer — played all 6 games
+    if (stats.roulettePlayed > 0 && stats.slotsPlayed > 0 && stats.bjPlayed > 0 && (stats.crashPlayed || 0) > 0 && (stats.minesPlayed || 0) > 0 && (stats.plinkoPlayed || 0) > 0) unlock('tried-all');
   }, [stats, unlock]);
 
   return (

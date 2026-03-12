@@ -16,4 +16,5 @@ export function checkWinAchievements({ betAmount, balance, newBalance, unlock, s
   if (newBalance >= 5000) unlock('balance-5k');
   if (newBalance >= 10000) unlock('balance-10k');
   if (newBalance >= 25000) unlock('balance-25k');
+  if (newBalance >= 50000) unlock('balance-50k');
 }
