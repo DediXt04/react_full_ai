@@ -314,24 +314,35 @@
   .nav-icon { font-size: 1.1rem; }
   .demo-pill { display: none; }
 
-  /* Dropdown: full-width on mobile */
+  /* Dropdown: inline expand on mobile */
   .dropdown-arrow { display: inline-block; font-size: 0.6rem; }
+  .nav-dropdown { position: static; }
   .dropdown-menu {
-    position: fixed;
-    top: auto;
-    bottom: 0;
+    position: absolute;
+    top: 100%;
     left: 0;
     right: 0;
-    transform: translateY(100%);
+    transform: none;
     min-width: 100%;
-    border-radius: 16px 16px 0 0;
-    padding: 0.75rem 0;
-    max-height: 60vh;
-    overflow-y: auto;
+    border-radius: 0 0 14px 14px;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: none;
+    transition: max-height 0.25s ease, padding 0.25s ease;
+    background: rgba(4, 8, 22, 0.97);
+    border: none;
+    border-top: 1px solid rgba(0, 212, 255, 0.08);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
   }
   .dropdown-menu::before { display: none; }
   .dropdown-menu.show {
-    transform: translateY(0);
+    max-height: 400px;
+    padding: 0.5rem 0;
+    pointer-events: auto;
+    transform: none;
   }
   .dropdown-item {
     padding: 0.85rem 1.5rem;

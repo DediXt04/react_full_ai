@@ -20,6 +20,9 @@ function Navbar({ balance, onResetBalance }) {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const canHover = useRef(
+    typeof window !== "undefined" && window.matchMedia("(hover: hover)").matches
+  );
 
   // Close dropdown when clicking/touching outside
   useEffect(() => {
@@ -65,8 +68,8 @@ function Navbar({ balance, onResetBalance }) {
 
           {/* Games dropdown */}
           <li className="nav-dropdown" ref={dropdownRef}
-              onMouseEnter={() => setDropdownOpen(true)}
-              onMouseLeave={() => setDropdownOpen(false)}
+              onMouseEnter={() => canHover.current && setDropdownOpen(true)}
+              onMouseLeave={() => canHover.current && setDropdownOpen(false)}
           >
             <button
               className={`nav-link nav-dropdown-trigger ${isGameActive ? "active" : ""}`}
